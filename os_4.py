@@ -16,6 +16,7 @@ RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 FLOOR_COLOR = (144, 228, 144) # 바닥 색깔
 PORTAL_COLOR = (255, 215, 0)  # 포탈 색깔 
+SPIKE_COLOR = (0, 0, 0)  # 가시 색깔
 
 # 캐릭터 속성 
 character_width, character_height = 50, 50
@@ -31,6 +32,10 @@ floor_y = SCREEN_HEIGHT - floor_height
 # 발판 속성 
 platform_width, platform_height = 100, 20
 platform_color = BLUE
+
+# 가시 속성 및 위치
+spike_width, spike_height = 10, 20
+spike_positions = [(x, floor_y - spike_height) for x in range(400, 600, spike_width)]
 
 # 점프 블록
 class Block:
@@ -69,6 +74,13 @@ def check_portal_collision(character, portal):
     portal_rect = pygame.Rect(portal.x, portal.y, platform_width, platform_height)
     return character.colliderect(portal_rect)
 
+# 가시 충돌 감지
+def check_spike_collision(character, spikes):
+    for spike in spikes:
+        if character.colliderect(pygame.Rect(spike[0], spike[1], spike_width, spike_height)):
+            return True
+    return False
+
 # 다음 맵 로드
 def load_next_map():
     global current_map_index, character_x, character_y, blocks, portal
@@ -80,6 +92,13 @@ def load_next_map():
         print("게임 클리어!")
         pygame.quit()
         sys.exit()
+
+# 게임 초기화
+def reset_game():
+    global character_x, character_y, vertical_momentum, is_on_ground
+    character_x, character_y = 30, SCREEN_HEIGHT - character_height * 2
+    vertical_momentum = 0
+    is_on_ground = True
 
 # 게임 루프
 running = True
@@ -138,9 +157,17 @@ while running:
     if check_portal_collision(character_rect, portal):
         load_next_map()
 
+    # 가시 충돌 검사
+    if check_spike_collision(character_rect, spike_positions):
+        reset_game()
+
     # 발판 
     for block in blocks:
         pygame.draw.rect(screen, platform_color, (block.x, block.y, platform_width, platform_height))
+
+    # 가시 그리기
+    for spike in spike_positions:
+        pygame.draw.rect(screen, SPIKE_COLOR, (spike[0], spike[1], spike_width, spike_height))
 
     # 포탈 
     pygame.draw.rect(screen, PORTAL_COLOR, (portal.x, portal.y, platform_width, platform_height))
