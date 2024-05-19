@@ -30,12 +30,12 @@ floor_height = 22
 floor_y = SCREEN_HEIGHT - floor_height
 
 # 발판 속성 
-platform_width, platform_height = 100, 20
+platform_width, platform_height = 50, 20
 platform_color = BLUE
 
 # 가시 속성 및 위치
 spike_width, spike_height = 10, 20
-spike_positions = [(x, floor_y - spike_height) for x in range(400, 600, spike_width)]
+spike_positions = [(x, floor_y - spike_height) for x in range(550, 600, spike_width)]
 
 # 점프 블록
 class Block:
@@ -115,10 +115,12 @@ def load_next_map():
 
 # 게임 초기화
 def reset_game():
-    global character_x, character_y, vertical_momentum, is_on_ground, blocks
+    global character_x, character_y, vertical_momentum, is_on_ground, blocks, additional_block_added
     character_x, character_y = 30, SCREEN_HEIGHT - character_height * 2
     vertical_momentum = 0
     is_on_ground = True
+    additional_block_added = False  # 추가된 블록 상태 초기화
+    blocks, portal, floor_hole_start, floor_hole_end = load_map(map_modules[current_map_index])
     for block in blocks:
         block.is_visible = True 
 
