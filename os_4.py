@@ -1,26 +1,7 @@
 import pygame
 import sys
-
-# 맵 모듈 정의
-class Map_1:
-    blocks_positions = [
-        (100, 500),
-        (300, 400),
-        (500, 300),
-        (700, 200)
-    ]
-    portal_position = (750, 50)
-    floor_hole_start = 200
-    floor_hole_end = 400
-
-class Map_2:
-    blocks_positions = [
-        (150, 450),
-        (350, 350),
-        (550, 250),
-        (750, 150)
-    ]
-    portal_position = (750, 50)
+import Map_1
+import Map_2
 
 pygame.init()
 
@@ -61,7 +42,7 @@ class Block:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.is_visible = True  # 블록의 가시성 추가
+        self.is_visible = True  
 
 # 포탈 
 class Portal:
@@ -73,14 +54,17 @@ class Portal:
 def load_map(map_module):
     blocks = [Block(x, y) for x, y in map_module.blocks_positions]
     portal = Portal(*map_module.portal_position)
-    floor_hole_start = getattr(map_module, 'floor_hole_start', None)  # 구멍 시작 위치 (없으면 None)
-    floor_hole_end = getattr(map_module, 'floor_hole_end', None)  # 구멍 끝 위치 (없으면 None)
+    floor_hole_start = getattr(map_module, 'floor_hole_start', None)  # 구멍 시작 위치 
+    floor_hole_end = getattr(map_module, 'floor_hole_end', None)  # 구멍 끝 위치 
     return blocks, portal, floor_hole_start, floor_hole_end
 
 # 초기 맵 설정
 map_modules = [Map_1, Map_2]
 current_map_index = 0
 blocks, portal, floor_hole_start, floor_hole_end = load_map(map_modules[current_map_index])
+
+# 충돌 영역 설정
+trigger_zone = pygame.Rect(275, 343, 140, 140) 
 
 clock = pygame.time.Clock()
 
@@ -89,10 +73,8 @@ font = pygame.font.Font(None, 20)
 
 # 충돌 감지
 def check_collision(character, blocks):
-    for i, block in enumerate(blocks):
+    for block in blocks:
         if block.is_visible and character.colliderect(pygame.Rect(block.x, block.y, platform_width, platform_height)):
-            if i == 1:  # 두 번째 블록 충돌 시
-                block.is_visible = False
             return block
     return None
 
@@ -115,6 +97,10 @@ def check_floor_hole_collision(character, floor_hole_start, floor_hole_end):
         return True
     return False
 
+# 특정 영역 충돌 감지
+def check_trigger_zone_collision(character, trigger_zone):
+    return character.colliderect(trigger_zone)
+
 # 다음 맵 로드
 def load_next_map():
     global current_map_index, character_x, character_y, blocks, portal, floor_hole_start, floor_hole_end
@@ -134,7 +120,7 @@ def reset_game():
     vertical_momentum = 0
     is_on_ground = True
     for block in blocks:
-        block.is_visible = True  # 모든 블록 가시성 초기화
+        block.is_visible = True 
 
 # 게임 루프
 running = True
@@ -203,9 +189,13 @@ while running:
     if check_floor_hole_collision(character_rect, floor_hole_start, floor_hole_end):
         reset_game()
 
+    # 특정 영역 충돌 검사 및 처리
+    if check_trigger_zone_collision(character_rect, trigger_zone):
+        blocks[1].is_visible = False 
+
     # 발판 
     for block in blocks:
-        if block.is_visible:  # 가시적인 블록만 그리기
+        if block.is_visible:  # Trie 일때 그리기
             pygame.draw.rect(screen, platform_color, (block.x, block.y, platform_width, platform_height))
             # 발판 위치 좌표
             text = font.render(f"({block.x}, {block.y})", True, RED)
@@ -217,9 +207,12 @@ while running:
 
     # 포탈 
     pygame.draw.rect(screen, PORTAL_COLOR, (portal.x, portal.y, platform_width, platform_height))
-    # 포탈 위치 텍스트 표시
+    # 포탈 위치 텍스트
     text = font.render(f"({portal.x}, {portal.y})", True, RED)
     screen.blit(text, (portal.x, portal.y - 20))
+
+    # 충돌 (디버깅용) 나중 삭제 !
+    pygame.draw.rect(screen, (0, 0, 0), trigger_zone, 2)
 
     # 캐릭터 
     pygame.draw.rect(screen, RED, character_rect)
