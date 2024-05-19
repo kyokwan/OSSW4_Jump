@@ -129,10 +129,12 @@ def load_next_map():
 
 # 게임 초기화
 def reset_game():
-    global character_x, character_y, vertical_momentum, is_on_ground
+    global character_x, character_y, vertical_momentum, is_on_ground, blocks
     character_x, character_y = 30, SCREEN_HEIGHT - character_height * 2
     vertical_momentum = 0
     is_on_ground = True
+    for block in blocks:
+        block.is_visible = True  # 모든 블록 가시성 초기화
 
 # 게임 루프
 running = True
