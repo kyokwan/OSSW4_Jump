@@ -53,12 +53,14 @@ class Portal:
 def load_map(map_module):
     blocks = [Block(x, y) for x, y in map_module.blocks_positions]
     portal = Portal(*map_module.portal_position)
-    return blocks, portal
+    floor_hole_start = getattr(map_module, 'floor_hole_start', None)  # 구멍 시작 위치 (없으면 None)
+    floor_hole_end = getattr(map_module, 'floor_hole_end', None)  # 구멍 끝 위치 (없으면 None)
+    return blocks, portal, floor_hole_start, floor_hole_end
 
 # 초기 맵 설정
 map_modules = [Map_1, Map_2]
 current_map_index = 0
-blocks, portal = load_map(map_modules[current_map_index])
+blocks, portal, floor_hole_start, floor_hole_end = load_map(map_modules[current_map_index])
 
 clock = pygame.time.Clock()
 
@@ -81,13 +83,20 @@ def check_spike_collision(character, spikes):
             return True
     return False
 
+# 바닥 구멍 충돌 감지
+def check_floor_hole_collision(character, floor_hole_start, floor_hole_end):
+    if (floor_hole_start is not None and floor_hole_end is not None and 
+        character.bottom >= floor_y and floor_hole_start <= character.left <= floor_hole_end):
+        return True
+    return False
+
 # 다음 맵 로드
 def load_next_map():
-    global current_map_index, character_x, character_y, blocks, portal
+    global current_map_index, character_x, character_y, blocks, portal, floor_hole_start, floor_hole_end
     current_map_index += 1
     if current_map_index < len(map_modules):
         character_x, character_y = 30, SCREEN_HEIGHT - character_height * 2
-        blocks, portal = load_map(map_modules[current_map_index])
+        blocks, portal, floor_hole_start, floor_hole_end = load_map(map_modules[current_map_index])
     else:
         print("게임 클리어!")
         pygame.quit()
@@ -138,6 +147,8 @@ while running:
 
     # 바닥 
     pygame.draw.rect(screen, FLOOR_COLOR, (0, floor_y, SCREEN_WIDTH, floor_height))
+    if floor_hole_start is not None and floor_hole_end is not None:
+        pygame.draw.rect(screen, WHITE, (floor_hole_start, floor_y, floor_hole_end - floor_hole_start, floor_height))
 
     # 충돌 검사 및 처리
     block_collided = check_collision(character_rect, blocks)
@@ -159,6 +170,10 @@ while running:
 
     # 가시 충돌 검사
     if check_spike_collision(character_rect, spike_positions):
+        reset_game()
+
+    # 바닥 구멍 충돌 검사
+    if check_floor_hole_collision(character_rect, floor_hole_start, floor_hole_end):
         reset_game()
 
     # 발판 
