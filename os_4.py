@@ -1,7 +1,26 @@
 import pygame
 import sys
-import Map_1
-import Map_2
+
+# 맵 모듈 정의
+class Map_1:
+    blocks_positions = [
+        (100, 500),
+        (300, 400),
+        (500, 300),
+        (700, 200)
+    ]
+    portal_position = (750, 50)
+    floor_hole_start = 200
+    floor_hole_end = 400
+
+class Map_2:
+    blocks_positions = [
+        (150, 450),
+        (350, 350),
+        (550, 250),
+        (750, 150)
+    ]
+    portal_position = (750, 50)
 
 pygame.init()
 
@@ -42,6 +61,7 @@ class Block:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        self.is_visible = True  # 블록의 가시성 추가
 
 # 포탈 
 class Portal:
@@ -69,8 +89,10 @@ font = pygame.font.Font(None, 20)
 
 # 충돌 감지
 def check_collision(character, blocks):
-    for block in blocks:
-        if character.colliderect(pygame.Rect(block.x, block.y, platform_width, platform_height)):
+    for i, block in enumerate(blocks):
+        if block.is_visible and character.colliderect(pygame.Rect(block.x, block.y, platform_width, platform_height)):
+            if i == 1:  # 두 번째 블록 충돌 시
+                block.is_visible = False
             return block
     return None
 
@@ -181,10 +203,11 @@ while running:
 
     # 발판 
     for block in blocks:
-        pygame.draw.rect(screen, platform_color, (block.x, block.y, platform_width, platform_height))
-        # 발판 위치 좌표
-        text = font.render(f"({block.x}, {block.y})", True, RED)
-        screen.blit(text, (block.x, block.y - 20))
+        if block.is_visible:  # 가시적인 블록만 그리기
+            pygame.draw.rect(screen, platform_color, (block.x, block.y, platform_width, platform_height))
+            # 발판 위치 좌표
+            text = font.render(f"({block.x}, {block.y})", True, RED)
+            screen.blit(text, (block.x, block.y - 20))
 
     # 가시 그리기
     for spike in spike_positions:
