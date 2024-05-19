@@ -14,9 +14,9 @@ pygame.display.set_caption("점프 점프")
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
-FLOOR_COLOR = (144, 228, 144) # 바닥 색깔
-PORTAL_COLOR = (255, 215, 0)  # 포탈 색깔 
-SPIKE_COLOR = (0, 0, 0)  # 가시 색깔
+FLOOR_COLOR = (144, 228, 144)  # 바닥 색
+PORTAL_COLOR = (255, 215, 0)   # 포탈 색
+SPIKE_COLOR = (0, 0, 0)        # 가시 색
 
 # 캐릭터 속성 
 character_width, character_height = 20, 20
@@ -54,8 +54,8 @@ class Portal:
 def load_map(map_module):
     blocks = [Block(x, y) for x, y in map_module.blocks_positions]
     portal = Portal(*map_module.portal_position)
-    floor_hole_start = getattr(map_module, 'floor_hole_start', None)  # 구멍 시작 위치 
-    floor_hole_end = getattr(map_module, 'floor_hole_end', None)  # 구멍 끝 위치 
+    floor_hole_start = getattr(map_module, 'floor_hole_start', None)  
+    floor_hole_end = getattr(map_module, 'floor_hole_end', None) 
     return blocks, portal, floor_hole_start, floor_hole_end
 
 # 초기 맵 설정
@@ -64,8 +64,8 @@ current_map_index = 0
 blocks, portal, floor_hole_start, floor_hole_end = load_map(map_modules[current_map_index])
 
 # 충돌 영역 설정
-trigger_zone = pygame.Rect(275, 343, 140, 140) 
-
+trigger_zone = pygame.Rect(250, 350, 100, 100)  
+additional_block_trigger = pygame.Rect(50, 350, 30, 30)  
 clock = pygame.time.Clock()
 
 # 폰트 설정
@@ -127,6 +127,7 @@ running = True
 vertical_momentum = 0
 is_on_ground = True
 space_pressed = False
+additional_block_added = False  # 추가된 블록의 상태
 
 while running:
     screen.fill(WHITE)
@@ -191,11 +192,16 @@ while running:
 
     # 특정 영역 충돌 검사 및 처리
     if check_trigger_zone_collision(character_rect, trigger_zone):
-        blocks[1].is_visible = False 
+        blocks[1].is_visible = False  # 두 번째는 낚시
+
+    # 추가 블록 영역 충돌 검사
+    if character_rect.colliderect(additional_block_trigger) and not additional_block_added:
+        blocks.append(Block(50, 375))
+        additional_block_added = True
 
     # 발판 
     for block in blocks:
-        if block.is_visible:  # Trie 일때 그리기
+        if block.is_visible:  
             pygame.draw.rect(screen, platform_color, (block.x, block.y, platform_width, platform_height))
             # 발판 위치 좌표
             text = font.render(f"({block.x}, {block.y})", True, RED)
@@ -207,12 +213,13 @@ while running:
 
     # 포탈 
     pygame.draw.rect(screen, PORTAL_COLOR, (portal.x, portal.y, platform_width, platform_height))
-    # 포탈 위치 텍스트
+    # 포탈 위치 텍스트 표시
     text = font.render(f"({portal.x}, {portal.y})", True, RED)
     screen.blit(text, (portal.x, portal.y - 20))
 
-    # 충돌 (디버깅용) 나중 삭제 !
+    # 충돌 영역 그리기 (디버깅용) # 나중에 삭제 !!
     pygame.draw.rect(screen, (0, 0, 0), trigger_zone, 2)
+    pygame.draw.rect(screen, (0, 255, 0), additional_block_trigger, 2)
 
     # 캐릭터 
     pygame.draw.rect(screen, RED, character_rect)
