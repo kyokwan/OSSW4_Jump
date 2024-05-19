@@ -19,7 +19,7 @@ PORTAL_COLOR = (255, 215, 0)  # 포탈 색깔
 SPIKE_COLOR = (0, 0, 0)  # 가시 색깔
 
 # 캐릭터 속성 
-character_width, character_height = 50, 50
+character_width, character_height = 20, 20
 character_x, character_y = 30, SCREEN_HEIGHT - character_height * 2
 character_speed = 10
 jump_speed = 20
@@ -63,6 +63,9 @@ current_map_index = 0
 blocks, portal, floor_hole_start, floor_hole_end = load_map(map_modules[current_map_index])
 
 clock = pygame.time.Clock()
+
+# 폰트 설정
+font = pygame.font.Font(None, 20)
 
 # 충돌 감지
 def check_collision(character, blocks):
@@ -179,6 +182,9 @@ while running:
     # 발판 
     for block in blocks:
         pygame.draw.rect(screen, platform_color, (block.x, block.y, platform_width, platform_height))
+        # 발판 위치 좌표
+        text = font.render(f"({block.x}, {block.y})", True, RED)
+        screen.blit(text, (block.x, block.y - 20))
 
     # 가시 그리기
     for spike in spike_positions:
@@ -186,6 +192,9 @@ while running:
 
     # 포탈 
     pygame.draw.rect(screen, PORTAL_COLOR, (portal.x, portal.y, platform_width, platform_height))
+    # 포탈 위치 텍스트 표시
+    text = font.render(f"({portal.x}, {portal.y})", True, RED)
+    screen.blit(text, (portal.x, portal.y - 20))
 
     # 캐릭터 
     pygame.draw.rect(screen, RED, character_rect)
