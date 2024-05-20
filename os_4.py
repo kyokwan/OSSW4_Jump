@@ -21,7 +21,7 @@ SPIKE_COLOR = (0, 0, 0)        # 가시 색
 # 캐릭터 속성
 character_width, character_height = 20, 20
 character_x, character_y = 30, SCREEN_HEIGHT - character_height * 2
-character_speed = 10
+character_speed = 7
 jump_speed = 20
 gravity = 1.4
 
