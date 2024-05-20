@@ -123,8 +123,8 @@ running = True
 vertical_momentum = 0
 is_on_ground = True
 space_pressed = False
-additional_block_added_1 = False  # 추가된 블록의 상태
-additional_block_added_2 = False  # 추가된 블록의 상태
+additional_block_added_1 = False 
+additional_block_added_2 = False 
 
 while running:
     screen.fill(WHITE)
@@ -190,10 +190,10 @@ while running:
 
     # 특정 영역 충돌 검사 및 처리
     if check_trigger_zone_collision(character_rect, del_block_1):
-        blocks[1].is_visible = False  # 두 번째는 낚시
+        blocks[1].is_visible = False  
         
     if check_trigger_zone_collision(character_rect, del_block_2):
-        blocks[4].is_visible = False  # 두 번째는 낚시
+        blocks[4].is_visible = False  
         
     # 추가 블록 영역 충돌 검사
     if character_rect.colliderect(add_block_1) and not additional_block_added_1:
@@ -202,7 +202,7 @@ while running:
 
         
 
-    # 발판
+    # 밟기
     for block in blocks:
         if block.is_visible:
             pygame.draw.rect(screen, platform_color, (block.x, block.y, platform_width, platform_height))
@@ -216,7 +216,7 @@ while running:
 
     # 포탈
     pygame.draw.rect(screen, PORTAL_COLOR, (portal.x, portal.y, platform_width, platform_height))
-    # 포탈 위치 텍스트 표시
+    # 포탈 위치 텍스트 표시 # 나중 삭제
     text = font.render(f"({portal.x}, {portal.y})", True, RED)
     screen.blit(text, (portal.x, portal.y - 20))
 
@@ -227,9 +227,8 @@ while running:
 
     # 캐릭터
     pygame.draw.rect(screen, RED, character_rect)
-
     pygame.display.update()
-    clock.tick(60)
+    clock.tick(60) # 수정 X 
 
 pygame.quit()
 sys.exit()
