@@ -63,8 +63,9 @@ current_map_index = 0
 blocks, portal = load_map(map_modules[current_map_index])
 
 # 충돌 영역 설정
-trigger_zone = pygame.Rect(220, 350, 100, 100)
-additional_block_trigger = pygame.Rect(50, 350, 30, 30)
+del_block_1 = pygame.Rect(220, 350, 100, 100)
+del_block_2 = pygame.Rect(100, 220, 30, 30)
+add_block_1 = pygame.Rect(50, 350, 30, 30)
 clock = pygame.time.Clock()
 
 # 폰트 설정
@@ -107,11 +108,12 @@ def load_next_map():
 
 # 게임 초기화
 def reset_game():
-    global character_x, character_y, vertical_momentum, is_on_ground, blocks, additional_block_added
+    global character_x, character_y, vertical_momentum, is_on_ground, blocks, additional_block_added_1, additional_block_added_2
     character_x, character_y = 30, SCREEN_HEIGHT - character_height * 2
     vertical_momentum = 0
     is_on_ground = True
-    additional_block_added = False  # 추가된 블록 상태 초기화
+    additional_block_added_1 = False  
+    additional_block_added_2 = False  
     blocks, portal = load_map(map_modules[current_map_index])
     for block in blocks:
         block.is_visible = True
@@ -121,7 +123,8 @@ running = True
 vertical_momentum = 0
 is_on_ground = True
 space_pressed = False
-additional_block_added = False  # 추가된 블록의 상태
+additional_block_added_1 = False  # 추가된 블록의 상태
+additional_block_added_2 = False  # 추가된 블록의 상태
 
 while running:
     screen.fill(WHITE)
@@ -186,13 +189,18 @@ while running:
         reset_game()
 
     # 특정 영역 충돌 검사 및 처리
-    if check_trigger_zone_collision(character_rect, trigger_zone):
+    if check_trigger_zone_collision(character_rect, del_block_1):
         blocks[1].is_visible = False  # 두 번째는 낚시
-
+        
+    if check_trigger_zone_collision(character_rect, del_block_2):
+        blocks[4].is_visible = False  # 두 번째는 낚시
+        
     # 추가 블록 영역 충돌 검사
-    if character_rect.colliderect(additional_block_trigger) and not additional_block_added:
+    if character_rect.colliderect(add_block_1) and not additional_block_added_1:
         blocks.append(Block(50, 375))
-        additional_block_added = True
+        additional_block_added_1 = True
+
+        
 
     # 발판
     for block in blocks:
@@ -213,8 +221,9 @@ while running:
     screen.blit(text, (portal.x, portal.y - 20))
 
     # 충돌 영역 그리기 (디버깅용) # 나중에 삭제 !!
-    pygame.draw.rect(screen, (0, 0, 0), trigger_zone, 2)
-    pygame.draw.rect(screen, (0, 255, 0), additional_block_trigger, 2)
+    pygame.draw.rect(screen, (0, 0, 0), del_block_1, 2)
+    pygame.draw.rect(screen, (0, 255, 0), add_block_1, 2)
+    pygame.draw.rect(screen, (255, 0, 255), del_block_2, 2)
 
     # 캐릭터
     pygame.draw.rect(screen, RED, character_rect)
