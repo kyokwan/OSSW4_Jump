@@ -21,7 +21,7 @@ SPIKE_COLOR = (0, 0, 0)        # 가시 색
 # 캐릭터 속성
 character_width, character_height = 20, 20
 character_x, character_y = 30, SCREEN_HEIGHT - character_height * 2
-character_speed = 7
+character_speed = 6
 jump_speed = 20
 gravity = 1.4
 
@@ -63,8 +63,8 @@ current_map_index = 0
 blocks, portal = load_map(map_modules[current_map_index])
 
 # 충돌 영역 설정
-trigger_zone = pygame.Rect(270, 350, 100, 100)
-additional_block_trigger = pygame.Rect(50, 350, 30, 30)
+trigger_zone = pygame.Rect(230, 350, 100, 100)
+additional_block_trigger = pygame.Rect(60, 350, 30, 30)
 clock = pygame.time.Clock()
 
 # 폰트 설정
@@ -111,7 +111,7 @@ def reset_game():
     character_x, character_y = 30, SCREEN_HEIGHT - character_height * 2
     vertical_momentum = 0
     is_on_ground = True
-    additional_block_added = False  # 추가된 블록 상태 초기화
+    additional_block_added = False  # 추가된 블록 초기화
     blocks, portal = load_map(map_modules[current_map_index])
     for block in blocks:
         block.is_visible = True
@@ -121,7 +121,7 @@ running = True
 vertical_momentum = 0
 is_on_ground = True
 space_pressed = False
-additional_block_added = False  # 추가된 블록의 상태
+additional_block_added = False  # 추가된 블록의 
 
 while running:
     screen.fill(WHITE)
