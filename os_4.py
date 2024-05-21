@@ -40,10 +40,17 @@ spike_positions = [(x, floor_y - spike_height) for x in range(550, 600, spike_wi
 
 # 점프 블록
 class Block:
-    def __init__(self, x, y):
+    def __init__(self, x, y, speed=0):
         self.x = x
         self.y = y
+        self.speed = speed
         self.is_visible = True
+
+    def move(self):
+        if self.speed != 0:
+            self.x += self.speed
+            if self.x > SCREEN_WIDTH:
+                self.is_visible = False
 
 # 포탈
 class Portal:
@@ -66,6 +73,7 @@ blocks, portal = load_map(map_modules[current_map_index])
 del_block_1 = pygame.Rect(220, 350, 100, 100)
 del_block_2 = pygame.Rect(100, 220, 30, 30)
 add_block_1 = pygame.Rect(50, 350, 30, 30)
+trigger_moving_block_zone = pygame.Rect(160, 220, 30, 30)
 clock = pygame.time.Clock()
 
 # 폰트 설정
@@ -125,6 +133,7 @@ is_on_ground = True
 space_pressed = False
 additional_block_added_1 = False 
 additional_block_added_2 = False 
+moving_block_triggered = False  # 움직이는 블록이 생성되었는지 여부
 
 while running:
     screen.fill(WHITE)
@@ -195,14 +204,25 @@ while running:
     if check_trigger_zone_collision(character_rect, del_block_2):
         blocks[4].is_visible = False  
         
+    # 움직이는 블록 생성 트리거
+    if check_trigger_zone_collision(character_rect, trigger_moving_block_zone) and not moving_block_triggered:
+        moving_block = Block(-platform_width, 230, speed=10)  # 왼쪽에서 오른쪽으로 이동하는 블록
+        blocks.append(moving_block)
+        moving_block_triggered = True
+
     # 추가 블록 영역 충돌 검사
     if character_rect.colliderect(add_block_1) and not additional_block_added_1:
         blocks.append(Block(50, 375))
         additional_block_added_1 = True
 
-        
+    # 블록 이동 및 충돌 검사
+    for block in blocks:
+        if block.speed != 0:
+            block.move()
+            if block.is_visible and character_rect.colliderect(pygame.Rect(block.x, block.y, platform_width, platform_height)):
+                reset_game()
 
-    # 밟기
+    # 발판
     for block in blocks:
         if block.is_visible:
             pygame.draw.rect(screen, platform_color, (block.x, block.y, platform_width, platform_height))
@@ -224,11 +244,12 @@ while running:
     pygame.draw.rect(screen, (0, 0, 0), del_block_1, 2)
     pygame.draw.rect(screen, (0, 255, 0), add_block_1, 2)
     pygame.draw.rect(screen, (255, 0, 255), del_block_2, 2)
+    pygame.draw.rect(screen, (0, 0, 255), trigger_moving_block_zone, 2)  
 
     # 캐릭터
     pygame.draw.rect(screen, RED, character_rect)
     pygame.display.update()
-    clock.tick(60) # 수정 X 
+    clock.tick(60)  # 프레임 속도 유지
 
 pygame.quit()
 sys.exit()
