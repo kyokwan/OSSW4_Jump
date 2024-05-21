@@ -116,12 +116,13 @@ def load_next_map():
 
 # 게임 초기화
 def reset_game():
-    global character_x, character_y, vertical_momentum, is_on_ground, blocks, additional_block_added_1, additional_block_added_2
+    global character_x, character_y, vertical_momentum, is_on_ground, blocks, additional_block_added_1, additional_block_added_2, moving_block_triggered
     character_x, character_y = 30, SCREEN_HEIGHT - character_height * 2
     vertical_momentum = 0
     is_on_ground = True
     additional_block_added_1 = False  
     additional_block_added_2 = False  
+    moving_block_triggered = False  # 움직이는 블록 초기화
     blocks, portal = load_map(map_modules[current_map_index])
     for block in blocks:
         block.is_visible = True
@@ -206,7 +207,7 @@ while running:
         
     # 움직이는 블록 생성 트리거
     if check_trigger_zone_collision(character_rect, trigger_moving_block_zone) and not moving_block_triggered:
-        moving_block = Block(-platform_width, 230, speed=10)  # 왼쪽에서 오른쪽으로 이동하는 블록
+        moving_block = Block(-platform_width, 230, speed=9)  
         blocks.append(moving_block)
         moving_block_triggered = True
 
@@ -244,7 +245,7 @@ while running:
     pygame.draw.rect(screen, (0, 0, 0), del_block_1, 2)
     pygame.draw.rect(screen, (0, 255, 0), add_block_1, 2)
     pygame.draw.rect(screen, (255, 0, 255), del_block_2, 2)
-    pygame.draw.rect(screen, (0, 0, 255), trigger_moving_block_zone, 2)  
+    pygame.draw.rect(screen, (0, 0, 255), trigger_moving_block_zone, 2)  # 트리거 영역
 
     # 캐릭터
     pygame.draw.rect(screen, RED, character_rect)
