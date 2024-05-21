@@ -1,6 +1,5 @@
 import pygame
 import sys
-import time
 import Map_1
 import Map_2
 
@@ -82,7 +81,7 @@ font = pygame.font.Font(None, 20)
 
 # 타이머 설정
 block_spawn_time = 0
-block_spawn_delay = 0.5
+block_spawn_delay = 2  # 2초 후 블록 생성
 
 # 충돌 감지
 def check_collision(character, blocks):
@@ -121,7 +120,7 @@ def load_next_map():
 
 # 게임 초기화
 def reset_game():
-    global character_x, character_y, vertical_momentum, is_on_ground, blocks, additional_block_added_1, additional_block_added_2, moving_block_triggered, block_spawn_time
+    global character_x, character_y, vertical_momentum, is_on_ground, blocks, additional_block_added_1, additional_block_added_2, moving_block_triggered, block_spawn_time, block_spawned
     character_x, character_y = 30, SCREEN_HEIGHT - character_height * 2
     vertical_momentum = 0
     is_on_ground = True
@@ -129,6 +128,7 @@ def reset_game():
     additional_block_added_2 = False  
     moving_block_triggered = False  # 움직이는 블록 초기화
     block_spawn_time = 0  # 타이머 초기화
+    block_spawned = False  # 블록이 생성되지 않은 상태로 초기화
     blocks, portal = load_map(map_modules[current_map_index])
     for block in blocks:
         block.is_visible = True
@@ -141,6 +141,7 @@ space_pressed = False
 additional_block_added_1 = False 
 additional_block_added_2 = False 
 moving_block_triggered = False  # 움직이는 블록이 생성되었는지 여부
+block_spawned = False  # 블록이 생성되었는지 여부
 
 while running:
     screen.fill(WHITE)
@@ -212,15 +213,15 @@ while running:
         blocks[4].is_visible = False  
         
     # 움직이는 블록 생성 트리거
-    if check_trigger_zone_collision(character_rect, trigger_moving_block_zone) and not moving_block_triggered:
+    if check_trigger_zone_collision(character_rect, trigger_moving_block_zone) and not moving_block_triggered and not block_spawned:
         block_spawn_time = pygame.time.get_ticks()  # 현재 시간 저장
         moving_block_triggered = True
 
-    # 2초 후 움직이는 블록 생성
-    if moving_block_triggered and (pygame.time.get_ticks() - block_spawn_time) >= block_spawn_delay * 1000:
-        moving_block = Block(-platform_width, 230, speed=9)  
+    # 움직여라
+    if moving_block_triggered and not block_spawned and (pygame.time.get_ticks() - block_spawn_time) >= block_spawn_delay * 400:
+        moving_block = Block(-platform_width, 230, speed=9)  # 왼쪽에서 오른쪽으로 이동하는 블록
         blocks.append(moving_block)
-        moving_block_triggered = False  #
+        block_spawned = True 
 
     # 추가 블록 영역 충돌 검사
     if character_rect.colliderect(add_block_1) and not additional_block_added_1:
@@ -256,7 +257,7 @@ while running:
     pygame.draw.rect(screen, (0, 0, 0), del_block_1, 2)
     pygame.draw.rect(screen, (0, 255, 0), add_block_1, 2)
     pygame.draw.rect(screen, (255, 0, 255), del_block_2, 2)
-    pygame.draw.rect(screen, (0, 0, 255), trigger_moving_block_zone, 2)  # 트리거 영역
+    pygame.draw.rect(screen, (0, 0, 255), trigger_moving_block_zone, 2)  
 
     # 캐릭터
     pygame.draw.rect(screen, RED, character_rect)
