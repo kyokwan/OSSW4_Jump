@@ -40,11 +40,13 @@ spike_positions = [(x, floor_y - spike_height) for x in range(550, 600, spike_wi
 
 # 점프 블록
 class Block:
-    def __init__(self, x, y, speed=0):
+    def __init__(self, x, y, speed=0, cloud=False):
         self.x = x
         self.y = y
         self.speed = speed
+        self.cloud = cloud  # 구름 블록 여부
         self.is_visible = True
+
 
     def move(self):
         if self.speed != 0:
@@ -60,9 +62,10 @@ class Portal:
 
 # 맵 로드
 def load_map(map_module):
-    blocks = [Block(x, y) for x, y in map_module.blocks_positions]
+    blocks = [Block(x, y, cloud=(y == 260 and x in [100])) for x, y in map_module.blocks_positions]
     portal = Portal(*map_module.portal_position)
     return blocks, portal
+
 
 # 초기 맵 설정
 map_modules = [Map_1, Map_2]
@@ -71,7 +74,7 @@ blocks, portal = load_map(map_modules[current_map_index])
 
 # 충돌 영역 설정
 del_block_1 = pygame.Rect(220, 350, 100, 100)
-del_block_2 = pygame.Rect(100, 220, 30, 30)
+# del_block_2 = pygame.Rect(100, 220, 30, 30)
 add_block_1 = pygame.Rect(50, 340, 30, 30)
 trigger_moving_block_zone = pygame.Rect(160, 220, 30, 30)
 clock = pygame.time.Clock()
@@ -83,12 +86,22 @@ font = pygame.font.Font(None, 20)
 block_spawn_time = 0
 block_spawn_delay = 2  # 2초 후 블록 생성
 
-# 충돌 감지
 def check_collision(character, blocks):
     for block in blocks:
-        if block.is_visible and character.colliderect(pygame.Rect(block.x, block.y, platform_width, platform_height)):
+        if block.is_visible and not block.cloud and character.colliderect(pygame.Rect(block.x, block.y, platform_width, platform_height)):
             return block
     return None
+
+def check_bottom_collision(character, block):
+    if block.cloud:  # 구름 블록일 경우
+        if character.bottom >= block.y and character.top < block.y and character.right > block.x and character.left < block.x + platform_width:
+            return True
+    else:
+        block_rect = pygame.Rect(block.x, block.y, platform_width, platform_height)
+        if character.bottom >= block_rect.top and character.top < block_rect.top and character.right > block_rect.left and character.left < block_rect.right:
+            return True
+    return False
+
 
 # 포탈 충돌 감지
 def check_portal_collision(character, portal):
@@ -229,8 +242,8 @@ while running:
     if check_trigger_zone_collision(character_rect, del_block_1):
         blocks[1].is_visible = False
         
-    if check_trigger_zone_collision(character_rect, del_block_2):
-        blocks[4].is_visible = False
+    # if check_trigger_zone_collision(character_rect, del_block_2):
+    #    blocks[4].is_visible = False
         
     # 움직이는 블록 생성 트리거
     if check_trigger_zone_collision(character_rect, trigger_moving_block_zone) and not moving_block_triggered and not block_spawned:
@@ -276,8 +289,8 @@ while running:
     # 충돌 영역 그리기 (디버깅용) # 나중에 삭제 !!
     pygame.draw.rect(screen, (0, 0, 0), del_block_1, 2)
     pygame.draw.rect(screen, (0, 255, 0), add_block_1, 2)
-    pygame.draw.rect(screen, (255, 0, 255), del_block_2, 2)
-    pygame.draw.rect(screen, (0, 0, 255), trigger_moving_block_zone, 2)  # 트리거 영역
+    # pygame.draw.rect(screen, (255, 0, 255), del_block_2, 2)
+    pygame.draw.rect(screen, (0, 0, 255), trigger_moving_block_zone, 2) 
 
     # 캐릭터
     pygame.draw.rect(screen, RED, character_rect)
