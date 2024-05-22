@@ -237,9 +237,9 @@ while running:
         block_spawn_time = pygame.time.get_ticks()  # 현재 시간 저장
         moving_block_triggered = True
 
-    # 2초 후 움직이는 블록 생성
-    if moving_block_triggered and not block_spawned and (pygame.time.get_ticks() - block_spawn_time) >= block_spawn_delay * 1000:
-        moving_block = Block(-platform_width, 220, speed=5)  # 왼쪽에서 오른쪽으로 이동하는 블록
+
+    if moving_block_triggered and not block_spawned and (pygame.time.get_ticks() - block_spawn_time) >= block_spawn_delay * 400:
+        moving_block = Block(-platform_width, 230, speed=9)  # 왼쪽에서 오른쪽으로 이동하는 블록
         blocks.append(moving_block)
         block_spawned = True  # 블록이 생성되었음을 표시
 
