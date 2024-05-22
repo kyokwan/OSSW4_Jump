@@ -150,6 +150,15 @@ additional_block_added_2 = False
 moving_block_triggered = False  # 움직이는 블록이 생성되었는지 여부
 block_spawned = False  # 블록이 생성되었는지 여부
 
+# 캐릭터의 상단이 블록의 하단에 닿을 때
+def check_top_collision(character, block):
+    block_rect = pygame.Rect(block.x, block.y, platform_width, platform_height)
+    if (character.top <= block_rect.bottom and character.bottom > block_rect.bottom and
+            character.right > block_rect.left and character.left < block_rect.right):
+        return True
+    return False
+
+# 게임 루프 내 충돌 검사 및 처리 부분 수정
 while running:
     screen.fill(WHITE)
     character_rect = pygame.Rect(character_x, character_y, character_width, character_height)
@@ -203,9 +212,10 @@ while running:
             character_y = block_collided.y - character_height
             vertical_momentum = 0
             is_on_ground = True
-        elif check_bottom_collision(character_rect, block_collided):
+        elif check_top_collision(character_rect, block_collided):
             character_y = block_collided.y + platform_height
-            vertical_momentum = 0
+            vertical_momentum = jump_speed  # 반대 방향으로 튕겨나기
+            is_on_ground = False
 
     # 포탈 충돌 검사
     if check_portal_collision(character_rect, portal):
@@ -217,10 +227,10 @@ while running:
 
     # 특정 영역 충돌 검사 및 처리
     if check_trigger_zone_collision(character_rect, del_block_1):
-        blocks[1].is_visible = False  
+        blocks[1].is_visible = False
         
     if check_trigger_zone_collision(character_rect, del_block_2):
-        blocks[4].is_visible = False  
+        blocks[4].is_visible = False
         
     # 움직이는 블록 생성 트리거
     if check_trigger_zone_collision(character_rect, trigger_moving_block_zone) and not moving_block_triggered and not block_spawned:
