@@ -72,7 +72,7 @@ blocks, portal = load_map(map_modules[current_map_index])
 # 충돌 영역 설정
 del_block_1 = pygame.Rect(220, 350, 100, 100)
 del_block_2 = pygame.Rect(100, 220, 30, 30)
-add_block_1 = pygame.Rect(50, 350, 30, 30)
+add_block_1 = pygame.Rect(50, 340, 30, 30)
 trigger_moving_block_zone = pygame.Rect(160, 220, 30, 30)
 clock = pygame.time.Clock()
 
@@ -105,6 +105,13 @@ def check_spike_collision(character, spikes):
 # 특정 영역 충돌 감지
 def check_trigger_zone_collision(character, trigger_zone):
     return character.colliderect(trigger_zone)
+
+# 블록의 바닥과 충돌 감지
+def check_bottom_collision(character, block):
+    block_rect = pygame.Rect(block.x, block.y, platform_width, platform_height)
+    if character.bottom >= block_rect.top and character.top < block_rect.top and character.right > block_rect.left and character.left < block_rect.right:
+        return True
+    return False
 
 # 다음 맵 로드
 def load_next_map():
@@ -196,6 +203,9 @@ while running:
             character_y = block_collided.y - character_height
             vertical_momentum = 0
             is_on_ground = True
+        elif check_bottom_collision(character_rect, block_collided):
+            character_y = block_collided.y + platform_height
+            vertical_momentum = 0
 
     # 포탈 충돌 검사
     if check_portal_collision(character_rect, portal):
@@ -217,11 +227,11 @@ while running:
         block_spawn_time = pygame.time.get_ticks()  # 현재 시간 저장
         moving_block_triggered = True
 
-    # 움직여라
-    if moving_block_triggered and not block_spawned and (pygame.time.get_ticks() - block_spawn_time) >= block_spawn_delay * 400:
-        moving_block = Block(-platform_width, 230, speed=9)  # 왼쪽에서 오른쪽으로 이동하는 블록
+    # 2초 후 움직이는 블록 생성
+    if moving_block_triggered and not block_spawned and (pygame.time.get_ticks() - block_spawn_time) >= block_spawn_delay * 1000:
+        moving_block = Block(-platform_width, 220, speed=5)  # 왼쪽에서 오른쪽으로 이동하는 블록
         blocks.append(moving_block)
-        block_spawned = True 
+        block_spawned = True  # 블록이 생성되었음을 표시
 
     # 추가 블록 영역 충돌 검사
     if character_rect.colliderect(add_block_1) and not additional_block_added_1:
@@ -257,7 +267,7 @@ while running:
     pygame.draw.rect(screen, (0, 0, 0), del_block_1, 2)
     pygame.draw.rect(screen, (0, 255, 0), add_block_1, 2)
     pygame.draw.rect(screen, (255, 0, 255), del_block_2, 2)
-    pygame.draw.rect(screen, (0, 0, 255), trigger_moving_block_zone, 2)  
+    pygame.draw.rect(screen, (0, 0, 255), trigger_moving_block_zone, 2)  # 트리거 영역
 
     # 캐릭터
     pygame.draw.rect(screen, RED, character_rect)
