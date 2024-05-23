@@ -9,7 +9,7 @@ blocks_positions = [
     (160, 260)  
     
 ]
-portal_position = (750, 50)
+# portal_position = (750, 50)
 
 # 바닥 구멍 
 floor_hole_start = 200
