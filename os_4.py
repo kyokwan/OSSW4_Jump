@@ -161,7 +161,7 @@ space_pressed = False
 additional_block_added_1 = False 
 additional_block_added_2 = False 
 moving_block_triggered = False  # 움직이는 블록이 생성되었는지 여부
-block_spawned = False  # 블록이 생성되었는지 여부
+block_spawned = False  # 블록이 생성되지 않은 상태로 초기화
 camera_x = 0  # 카메라 초기화
 
 # 캐릭터의 상단이 블록의 하단에 닿을 때
@@ -198,6 +198,7 @@ while running:
         character_x += character_speed
 
     # 화면 범위 제한, 바닥 충돌 처리
+    character_x = max(0, character_x)  # 캐릭터가 왼쪽으로 화면을 벗어나지 못하게 제한
     vertical_momentum += gravity
     character_y += vertical_momentum
 
@@ -213,7 +214,7 @@ while running:
             vertical_momentum = 0
             is_on_ground = True
 
-    # 화면 중앙으로 카메라 위치 조정
+    # 화면 중앙으로 카메라 위치 조정 (오른쪽으로 갈 때만)
     if character_x > SCREEN_WIDTH // 2:
         camera_x = character_x - SCREEN_WIDTH // 2
     else:
