@@ -2,7 +2,7 @@ import pygame
 import sys
 import Map_1
 import Map_2
-
+import math
 pygame.init()
 
 # 화면 크기 설정
@@ -171,7 +171,7 @@ def check_top_collision(character, block):
         return True
     return False
 
-# 게임 루프 내 충돌 검사 및 처리 부분 수정
+# 충돌 검사 및 처리 부분 
 while running:
     screen.fill(WHITE)
     character_rect = pygame.Rect(character_x, character_y, character_width, character_height)
@@ -221,13 +221,13 @@ while running:
     # 충돌 검사 및 처리
     block_collided = check_collision(character_rect, blocks)
     if block_collided:
-        if vertical_momentum > 0:
+        if vertical_momentum > 0:  # 캐릭터가 아래로 떨어지고 있을 때
             character_y = block_collided.y - character_height
             vertical_momentum = 0
             is_on_ground = True
-        elif check_top_collision(character_rect, block_collided):
+        elif check_top_collision(character_rect, block_collided):  # 캐릭터가 블록 하단에 충돌할 때
             character_y = block_collided.y + platform_height
-            vertical_momentum = jump_speed  # 반대 방향으로 튕겨나기
+            vertical_momentum = gravity  # 중력만큼의 속도로 떨어지도록 설정
             is_on_ground = False
 
     # 포탈 충돌 검사
@@ -242,14 +242,10 @@ while running:
     if check_trigger_zone_collision(character_rect, del_block_1):
         blocks[1].is_visible = False
         
-    # if check_trigger_zone_collision(character_rect, del_block_2):
-    #    blocks[4].is_visible = False
-        
     # 움직이는 블록 생성 트리거
     if check_trigger_zone_collision(character_rect, trigger_moving_block_zone) and not moving_block_triggered and not block_spawned:
         block_spawn_time = pygame.time.get_ticks()  # 현재 시간 저장
         moving_block_triggered = True
-
 
     if moving_block_triggered and not block_spawned and (pygame.time.get_ticks() - block_spawn_time) >= block_spawn_delay * 400:
         moving_block = Block(-platform_width, 230, speed=9)  # 왼쪽에서 오른쪽으로 이동하는 블록
@@ -282,15 +278,14 @@ while running:
 
     # 포탈
     pygame.draw.rect(screen, PORTAL_COLOR, (portal.x, portal.y, platform_width, platform_height))
-    # 포탈 위치 텍스트 표시 # 나중 삭제
+    # 포탈 위치 텍스트 표시
     text = font.render(f"({portal.x}, {portal.y})", True, RED)
     screen.blit(text, (portal.x, portal.y - 20))
 
-    # 충돌 영역 그리기 (디버깅용) # 나중에 삭제 !!
+    # 충돌 영역 그리기 (디버깅용)
     pygame.draw.rect(screen, (0, 0, 0), del_block_1, 2)
     pygame.draw.rect(screen, (0, 255, 0), add_block_1, 2)
-    # pygame.draw.rect(screen, (255, 0, 255), del_block_2, 2)
-    pygame.draw.rect(screen, (0, 0, 255), trigger_moving_block_zone, 2) 
+    pygame.draw.rect(screen, (0, 0, 255), trigger_moving_block_zone, 2)
 
     # 캐릭터
     pygame.draw.rect(screen, RED, character_rect)
