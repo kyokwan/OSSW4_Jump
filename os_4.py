@@ -14,7 +14,6 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 FLOOR_COLOR = (144, 228, 144)  # 바닥 색
-# PORTAL_COLOR = (255, 215, 0)   # 포탈 색
 SPIKE_COLOR = (0, 0, 0)        # 가시 색
 
 # 캐릭터 속성
@@ -40,6 +39,9 @@ platform_color = BLUE
 spike_width, spike_height = 10, 20
 spike_positions = [(x, floor_y - spike_height) for x in range(550, 600, spike_width)]
 
+# 맵의 최대 크기
+max_map_width = 1200  
+
 # 점프 블록
 class Block:
     def __init__(self, x, y, speed=0, cloud=False):
@@ -55,22 +57,15 @@ class Block:
             if self.x > SCREEN_WIDTH:
                 self.is_visible = False
 
-# 포탈
-# class Portal:
-#     def __init__(self, x, y):
-#         self.x = x
-#         self.y = y
-
 # 맵 로드
 def load_map(map_module):
     blocks = [Block(x, y, cloud=(y == 260 and x in [100])) for x, y in map_module.blocks_positions]
-    # portal = Portal(*map_module.portal_position)
-    return blocks #, portal
+    return blocks
 
 # 초기 맵 설정
 map_modules = [Map_1]
 current_map_index = 0
-blocks = load_map(map_modules[current_map_index]) #, portal = load_map(map_modules[current_map_index])
+blocks = load_map(map_modules[current_map_index])
 
 # 충돌 영역 설정
 del_block_1 = pygame.Rect(220, 350, 100, 100)
@@ -101,11 +96,6 @@ def check_bottom_collision(character, block):
             return True
     return False
 
-# 포탈 충돌 감지
-# def check_portal_collision(character, portal):
-#     portal_rect = pygame.Rect(portal.x, portal.y, platform_width, platform_height)
-#     return character.colliderect(portal_rect)
-
 # 가시 충돌 감지
 def check_spike_collision(character, spikes):
     for spike in spikes:
@@ -117,13 +107,6 @@ def check_spike_collision(character, spikes):
 def check_trigger_zone_collision(character, trigger_zone):
     return character.colliderect(trigger_zone)
 
-# 블록의 바닥과 충돌 감지
-def check_bottom_collision(character, block):
-    block_rect = pygame.Rect(block.x, block.y, platform_width, platform_height)
-    if character.bottom >= block_rect.top and character.top < block_rect.top and character.right > block_rect.left and character.left < block_rect.right:
-        return True
-    return False
-
 # 다음 맵 로드
 def load_next_map():
     global current_map_index, character_x, character_y, blocks, camera_x
@@ -131,7 +114,7 @@ def load_next_map():
     if current_map_index < len(map_modules):
         character_x, character_y = 30, SCREEN_HEIGHT - character_height * 2
         camera_x = 0
-        blocks = load_map(map_modules[current_map_index]) #, portal = load_map(map_modules[current_map_index])
+        blocks = load_map(map_modules[current_map_index])
     else:
         print("게임 클리어!")
         pygame.quit()
@@ -149,7 +132,7 @@ def reset_game():
     block_spawn_time = 0  # 타이머 초기화
     block_spawned = False  # 블록이 생성되지 않은 상태로 초기화
     camera_x = 0  # 카메라 초기화
-    blocks = load_map(map_modules[current_map_index]) #, portal = load_map(map_modules[current_map_index])
+    blocks = load_map(map_modules[current_map_index])
     for block in blocks:
         block.is_visible = True
 
@@ -199,6 +182,8 @@ while running:
 
     # 화면 범위 제한, 바닥 충돌 처리
     character_x = max(0, character_x)  # 캐릭터가 왼쪽으로 화면을 벗어나지 못하게 제한
+    character_x = min(character_x, max_map_width - character_width)  # 캐릭터가 오른쪽으로 맵의 끝을 벗어나지 못하게 제한
+
     vertical_momentum += gravity
     character_y += vertical_momentum
 
@@ -238,10 +223,6 @@ while running:
             character_y = block_collided.y + platform_height
             vertical_momentum = gravity  # 반대 방향으로 튕겨나기
             is_on_ground = False
-
-    # 포탈 충돌 검사
-    # if check_portal_collision(character_rect, portal):
-    #     load_next_map()
 
     # 가시 충돌 검사
     if check_spike_collision(character_rect, spike_positions):
@@ -284,12 +265,6 @@ while running:
     # 가시 그리기
     for spike in spike_positions:
         pygame.draw.rect(screen, SPIKE_COLOR, (spike[0] - camera_x, spike[1], spike_width, spike_height))
-
-    # 포탈
-    # pygame.draw.rect(screen, PORTAL_COLOR, (portal.x - camera_x, portal.y, platform_width, platform_height))
-    # 포탈 위치 텍스트 표시
-    # text = font.render(f"({portal.x}, {portal.y})", True, RED)
-    # screen.blit(text, (portal.x - camera_x, portal.y - 20))
 
     # 충돌 영역 그리기 (디버깅용)
     pygame.draw.rect(screen, (0, 0, 0), del_block_1.move(-camera_x, 0), 2)
