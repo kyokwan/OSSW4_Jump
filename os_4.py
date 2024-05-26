@@ -200,10 +200,8 @@ while running:
             is_on_ground = True
 
     # 화면 중앙으로 카메라 위치 조정 (오른쪽으로 갈 때만)
-    if character_x > SCREEN_WIDTH // 2:
+    if character_x > SCREEN_WIDTH // 2 and character_x < max_map_width - SCREEN_WIDTH // 2:
         camera_x = character_x - SCREEN_WIDTH // 2
-    else:
-        camera_x = 0
 
     # 바닥 그리기
     if camera_x < floor_hole_start:
