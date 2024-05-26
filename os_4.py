@@ -40,7 +40,7 @@ spike_width, spike_height = 10, 20
 spike_positions = [(x, floor_y - spike_height) for x in range(550, 600, spike_width)]
 
 # 맵의 최대 크기
-max_map_width = 1200  
+max_map_width = 1200 
 
 # 점프 블록
 class Block:
@@ -200,8 +200,8 @@ while running:
             is_on_ground = True
 
     # 화면 중앙으로 카메라 위치 조정 (오른쪽으로 갈 때만)
-    if character_x > SCREEN_WIDTH // 2 and character_x < max_map_width - SCREEN_WIDTH // 2:
-        camera_x = character_x - SCREEN_WIDTH // 2
+    if character_x > SCREEN_WIDTH // 2 and camera_x < max_map_width - SCREEN_WIDTH:
+        camera_x = min(character_x - SCREEN_WIDTH // 2, max_map_width - SCREEN_WIDTH)
 
     # 바닥 그리기
     if camera_x < floor_hole_start:
