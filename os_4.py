@@ -41,6 +41,13 @@ max_map_width = 1200
 # 바닥 구멍 정보 로드
 floor_holes = Map_1.floor_holes
 
+# trick_hole 속성 추가
+trick_hole_x, trick_hole_y = 700, 920
+trick_hole_visible = False
+
+# trigger 영역 추가
+trigger_zone = pygame.Rect(680, 530, 15, 15)
+
 # 점프 블록
 class Block:
     def __init__(self, x, y, speed=0, cloud=False):
@@ -220,6 +227,12 @@ while running:
     for hole_start, hole_end in floor_holes:
         pygame.draw.rect(screen, WHITE, (hole_start - camera_x, floor_y, hole_end - hole_start, floor_height))
 
+    # trick_hole 그리기
+    if trick_hole_visible:
+        pygame.draw.rect(screen, WHITE, (trick_hole_x - camera_x, floor_y, 150, floor_height))  # trick_hole 크기 30으로 가정
+    else:
+        pygame.draw.rect(screen, FLOOR_COLOR, (trick_hole_x - camera_x, floor_y, 30, floor_height))
+
     # 충돌 검사 및 처리
     block_collided = check_collision(character_rect, blocks)
     if block_collided:
@@ -278,6 +291,7 @@ while running:
     pygame.draw.rect(screen, (0, 0, 0), del_block_1.move(-camera_x, 0), 2)
     pygame.draw.rect(screen, (0, 255, 0), add_block_1.move(-camera_x, 0), 2)
     pygame.draw.rect(screen, (0, 0, 255), trigger_moving_block_zone.move(-camera_x, 0), 2)
+    pygame.draw.rect(screen, (0, 255, 0), trigger_zone .move(-camera_x, 0), 2)
 
     # 캐릭터
     pygame.draw.rect(screen, RED, character_rect.move(-camera_x, 0))
