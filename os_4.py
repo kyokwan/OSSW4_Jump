@@ -250,6 +250,9 @@ while running:
         reset_game()
 
     # 특정 영역 충돌 검사 및 처리
+    if check_trigger_zone_collision(character_rect, trigger_zone):
+        trick_hole_visible = True  # 트릭 홀 활성화
+        
     if check_trigger_zone_collision(character_rect, del_block_1):
         blocks[1].is_visible = False
         
