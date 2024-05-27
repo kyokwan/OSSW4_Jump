@@ -42,8 +42,9 @@ max_map_width = 1200
 floor_holes = Map_1.floor_holes
 
 # trick_hole 속성 추가
-trick_hole_x, trick_hole_y = 700, 920
+trick_hole_x, trick_hole_y = 700, floor_y
 trick_hole_visible = False
+trick_hole_speed = 2  # 트릭홀이 내려가는 속도
 
 # trigger 영역 추가
 trigger_zone = pygame.Rect(680, 530, 15, 15)
@@ -132,7 +133,7 @@ drop_y = SCREEN_HEIGHT - floor_height + 200  # 떨어진 바닥의 y 좌표
 
 # 게임 초기화
 def reset_game():
-    global character_x, character_y, vertical_momentum, is_on_ground, blocks, additional_block_added_1, additional_block_added_2, moving_block_triggered, block_spawn_time, block_spawned, camera_x, trick_hole_visible
+    global character_x, character_y, vertical_momentum, is_on_ground, blocks, additional_block_added_1, additional_block_added_2, moving_block_triggered, block_spawn_time, block_spawned, camera_x, trick_hole_visible, trick_hole_y
     character_x, character_y = 30, SCREEN_HEIGHT - character_height * 2
     vertical_momentum = 0
     is_on_ground = True
@@ -146,6 +147,7 @@ def reset_game():
     for block in blocks:
         block.is_visible = True
     trick_hole_visible = False  # 트릭 홀 초기화
+    trick_hole_y = floor_y  # 트릭홀 위치 초기화
 
 # 게임 루프
 running = True
@@ -230,7 +232,9 @@ while running:
 
     # trick_hole 그리기
     if trick_hole_visible:
-        pygame.draw.rect(screen, WHITE, (trick_hole_x - camera_x, floor_y, 30, floor_height)) 
+        pygame.draw.rect(screen, WHITE, (trick_hole_x - camera_x, trick_hole_y, 30, floor_height))
+        if trick_hole_y < SCREEN_HEIGHT:
+            trick_hole_y += trick_hole_speed  # 트릭홀의 y 좌표를 점진적으로 증가시킴
     else:
         pygame.draw.rect(screen, FLOOR_COLOR, (trick_hole_x - camera_x, floor_y, 220, floor_height))
 
