@@ -27,10 +27,6 @@ gravity = 1.4
 floor_height = 40
 floor_y = SCREEN_HEIGHT - floor_height
 
-# 바닥 구멍
-floor_hole_start = 200
-floor_hole_end = 430
-
 # 발판 속성
 platform_width, platform_height = 50, 20
 platform_color = BLUE
@@ -41,6 +37,9 @@ spike_positions = [(x, floor_y - spike_height) for x in range(550, 600, spike_wi
 
 # 맵의 최대 크기
 max_map_width = 1200  
+
+# 바닥 구멍 정보 로드
+floor_holes = Map_1.floor_holes
 
 # 점프 블록
 class Block:
@@ -119,11 +118,6 @@ def load_next_map():
         print("게임 클리어!")
         pygame.quit()
         sys.exit()
-        
-def check_and_drop_floor(character, drop_start, drop_end, drop_y):
-    if drop_start <= character.x <= drop_end and character.y == 500:
-        return True
-    return False
 
 # 바닥 속성을 변경할 변수 추가
 floor_dropped = False
@@ -203,7 +197,13 @@ while running:
     # 바닥과의 충돌 체크
     is_on_ground = False
     if character_y >= floor_y - character_height:
-        if not (floor_hole_start < character_x < floor_hole_end):
+        is_in_hole = False
+        for hole_start, hole_end in floor_holes:
+            if hole_start < character_x < hole_end:
+                is_in_hole = True
+                break
+        
+        if not is_in_hole:
             character_y = floor_y - character_height
             vertical_momentum = 0
             is_on_ground = True
@@ -216,8 +216,9 @@ while running:
         camera_x = 0
 
     # 바닥 그리기
-    pygame.draw.rect(screen, FLOOR_COLOR, (0 - camera_x, floor_y, floor_hole_start - camera_x, floor_height))
-    pygame.draw.rect(screen, FLOOR_COLOR, (floor_hole_end - camera_x, floor_y, max_map_width - floor_hole_end, floor_height))
+    pygame.draw.rect(screen, FLOOR_COLOR, (0 - camera_x, floor_y, SCREEN_WIDTH, floor_height))
+    for hole_start, hole_end in floor_holes:
+        pygame.draw.rect(screen, WHITE, (hole_start - camera_x, floor_y, hole_end - hole_start, floor_height))
 
     # 충돌 검사 및 처리
     block_collided = check_collision(character_rect, blocks)

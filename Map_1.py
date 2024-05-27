@@ -7,7 +7,7 @@ blocks_positions = [
     
     (700, 450),
     (800, 450),
-    (800, 350),    
+    (800, 330),    
     (900, 450),
 
     
@@ -15,10 +15,12 @@ blocks_positions = [
     (160, 260)  
     
 ]
-portal_position = (1100, 50)
 
 # 바닥 구멍 
 floor_holes = [
     (200, 430),
     (700, 920)
 ]
+
+
+portal_position = (1100, 50)
