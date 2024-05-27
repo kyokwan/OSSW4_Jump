@@ -189,14 +189,12 @@ while running:
     if keys[pygame.K_RIGHT]:
         character_x += character_speed
 
+    # 화면 범위 제한, 바닥 충돌 처리
     character_x = max(0, character_x)  # 캐릭터가 왼쪽으로 화면을 벗어나지 못하게 제한
     character_x = min(character_x, max_map_width - character_width)  # 캐릭터가 오른쪽으로 맵의 끝을 벗어나지 못하게 제한
 
     vertical_momentum += gravity
     character_y += vertical_momentum
-
-    if character_y > SCREEN_HEIGHT:
-        reset_game()
 
     # y가 600을 넘으면 게임 리셋
     if character_y > SCREEN_HEIGHT:
