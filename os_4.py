@@ -73,7 +73,6 @@ add_block_1 = pygame.Rect(50, 340, 30, 30)
 trigger_moving_block_zone = pygame.Rect(160, 220, 30, 30)
 clock = pygame.time.Clock()
 
-
 # 폰트 설정
 font = pygame.font.Font(None, 20)
 
