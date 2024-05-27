@@ -223,7 +223,7 @@ while running:
         camera_x = 0
 
     # 바닥 그리기
-    pygame.draw.rect(screen, FLOOR_COLOR, (0 - camera_x, floor_y, SCREEN_WIDTH, floor_height))
+    pygame.draw.rect(screen, FLOOR_COLOR, (0 - camera_x, floor_y, max_map_width, floor_height))
     for hole_start, hole_end in floor_holes:
         pygame.draw.rect(screen, WHITE, (hole_start - camera_x, floor_y, hole_end - hole_start, floor_height))
 
@@ -294,7 +294,7 @@ while running:
     pygame.draw.rect(screen, (0, 0, 0), del_block_1.move(-camera_x, 0), 2)
     pygame.draw.rect(screen, (0, 255, 0), add_block_1.move(-camera_x, 0), 2)
     pygame.draw.rect(screen, (0, 0, 255), trigger_moving_block_zone.move(-camera_x, 0), 2)
-    pygame.draw.rect(screen, (0, 255, 0), trigger_zone .move(-camera_x, 0), 2)
+    pygame.draw.rect(screen, (0, 255, 0), trigger_zone.move(-camera_x, 0), 2)
 
     # 캐릭터
     pygame.draw.rect(screen, RED, character_rect.move(-camera_x, 0))
