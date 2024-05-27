@@ -78,7 +78,7 @@ del_block_1 = pygame.Rect(220, 350, 100, 100)
 add_block_1 = pygame.Rect(50, 340, 30, 30)
 trigger_moving_block_zone = pygame.Rect(160, 220, 30, 30)
 clock = pygame.time.Clock()
-trigger_zone = pygame.Rect(680, 530, 280, 15)
+trigger_zone = pygame.Rect(680, 530, 250, 15)
 
 # 폰트 설정
 font = pygame.font.Font(None, 20)
