@@ -143,7 +143,7 @@ is_on_ground = True
 space_pressed = False
 additional_block_added_1 = False 
 additional_block_added_2 = False 
-moving_block_triggered = False  # 움직 블록이 생성되었는지 여부
+moving_block_triggered = False  # 움직이는 블록이 생성되었는지 여부
 block_spawned = False  # 블록이 생성되지 않은 상태로 초기화
 camera_x = 0  # 카메라 초기화
 
@@ -181,8 +181,8 @@ while running:
         character_x += character_speed
 
     # 화면 범위 제한, 바닥 충돌 처리
-    character_x = max(0, character_x)  # 왼쪽으로 금지
-    character_x = min(character_x, max_map_width - character_width)  # 오른쪽 금지
+    character_x = max(0, character_x)  # 캐릭터가 왼쪽으로 화면을 벗어나지 못하게 제한
+    character_x = min(character_x, max_map_width - character_width)  # 캐릭터가 오른쪽으로 맵의 끝을 벗어나지 못하게 제한
 
     vertical_momentum += gravity
     character_y += vertical_momentum
@@ -203,6 +203,10 @@ while running:
     if character_x > SCREEN_WIDTH // 2 and camera_x < max_map_width - SCREEN_WIDTH:
         camera_x = min(character_x - SCREEN_WIDTH // 2, max_map_width - SCREEN_WIDTH)
 
+    # 화면이 왼쪽으로 슬라이딩되지 않게 조정
+    if camera_x < 0:
+        camera_x = 0
+
     # 바닥 그리기
     pygame.draw.rect(screen, FLOOR_COLOR, (0 - camera_x, floor_y, floor_hole_start - camera_x, floor_height))
     pygame.draw.rect(screen, FLOOR_COLOR, (floor_hole_end - camera_x, floor_y, max_map_width - floor_hole_end, floor_height))
@@ -216,7 +220,7 @@ while running:
             is_on_ground = True
         elif check_top_collision(character_rect, block_collided):
             character_y = block_collided.y + platform_height
-            vertical_momentum = gravity  # 아래로 머리쿵
+            vertical_momentum = gravity  # 반대 방향으로 튕겨나기
             is_on_ground = False
 
     # 가시 충돌 검사
