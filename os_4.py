@@ -232,7 +232,7 @@ while running:
     if trick_hole_visible:
         pygame.draw.rect(screen, WHITE, (trick_hole_x - camera_x, floor_y, 30, floor_height)) 
     else:
-        pygame.draw.rect(screen, FLOOR_COLOR, (trick_hole_x - camera_x, floor_y, 150, floor_height))
+        pygame.draw.rect(screen, FLOOR_COLOR, (trick_hole_x - camera_x, floor_y, 220, floor_height))
 
     # 충돌 검사 및 처리
     block_collided = check_collision(character_rect, blocks)
