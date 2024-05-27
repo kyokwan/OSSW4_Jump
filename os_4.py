@@ -122,11 +122,11 @@ def load_next_map():
 
 # 바닥 속성을 변경할 변수 추가
 floor_dropped = False
-drop_y = SCREEN_HEIGHT - floor_height + 200  # 떨어진 바닥의 y 좌표
+drop_y = SCREEN_HEIGHT  # 떨어진 바닥의 y 좌표 (화면 밖으로 설정)
 
 # 게임 초기화
 def reset_game():
-    global character_x, character_y, vertical_momentum, is_on_ground, blocks, additional_block_added_1, additional_block_added_2, moving_block_triggered, block_spawn_time, block_spawned, camera_x
+    global character_x, character_y, vertical_momentum, is_on_ground, blocks, additional_block_added_1, additional_block_added_2, moving_block_triggered, block_spawn_time, block_spawned, camera_x, floor_dropped
     character_x, character_y = 30, SCREEN_HEIGHT - character_height * 2
     vertical_momentum = 0
     is_on_ground = True
@@ -139,6 +139,7 @@ def reset_game():
     blocks = load_map(map_modules[current_map_index])
     for block in blocks:
         block.is_visible = True
+    floor_dropped = False  # 바닥 초기화
 
 # 캐릭터의 상단이 블록의 하단에 닿을 때
 def check_top_collision(character, block):
@@ -200,7 +201,7 @@ while running:
     # 바닥과의 충돌 체크
     is_on_ground = False
     if floor_dropped:
-        if character_y >= drop_y - character_height:
+        if character_y >= floor_y - character_height and not (floor_hole_start < character_x < floor_hole_end):
             character_y = drop_y - character_height
             vertical_momentum = 0
             is_on_ground = True
@@ -221,6 +222,7 @@ while running:
     # 바닥 그리기
     if floor_dropped:
         pygame.draw.rect(screen, FLOOR_COLOR, (0 - camera_x, drop_y, max_map_width, floor_height))
+        pygame.draw.rect(screen, WHITE, (floor_hole_start - camera_x, floor_y, floor_hole_end - floor_hole_start, floor_height))
     else:
         pygame.draw.rect(screen, FLOOR_COLOR, (0 - camera_x, floor_y, floor_hole_start - camera_x, floor_height))
         pygame.draw.rect(screen, FLOOR_COLOR, (floor_hole_end - camera_x, floor_y, max_map_width - floor_hole_end, floor_height))
