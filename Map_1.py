@@ -20,3 +20,6 @@ portal_position = (1100, 50)
 # 바닥 구멍 
 floor_hole_start = 200
 floor_hole_end = 430
+
+floor_hole_start = 700
+floor_hole_end = 920

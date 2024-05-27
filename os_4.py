@@ -119,14 +119,19 @@ def load_next_map():
         print("게임 클리어!")
         pygame.quit()
         sys.exit()
+        
+def check_and_drop_floor(character, drop_start, drop_end, drop_y):
+    if drop_start <= character.x <= drop_end and character.y == 500:
+        return True
+    return False
 
 # 바닥 속성을 변경할 변수 추가
 floor_dropped = False
-drop_y = SCREEN_HEIGHT  # 떨어진 바닥의 y 좌표 (화면 밖으로 설정)
+drop_y = SCREEN_HEIGHT - floor_height + 200  # 떨어진 바닥의 y 좌표
 
 # 게임 초기화
 def reset_game():
-    global character_x, character_y, vertical_momentum, is_on_ground, blocks, additional_block_added_1, additional_block_added_2, moving_block_triggered, block_spawn_time, block_spawned, camera_x, floor_dropped
+    global character_x, character_y, vertical_momentum, is_on_ground, blocks, additional_block_added_1, additional_block_added_2, moving_block_triggered, block_spawn_time, block_spawned, camera_x
     character_x, character_y = 30, SCREEN_HEIGHT - character_height * 2
     vertical_momentum = 0
     is_on_ground = True
@@ -139,15 +144,6 @@ def reset_game():
     blocks = load_map(map_modules[current_map_index])
     for block in blocks:
         block.is_visible = True
-    floor_dropped = False  # 바닥 초기화
-
-# 캐릭터의 상단이 블록의 하단에 닿을 때
-def check_top_collision(character, block):
-    block_rect = pygame.Rect(block.x, block.y, platform_width, platform_height)
-    if (character.top <= block_rect.bottom and character.bottom > block_rect.bottom and
-            character.right > block_rect.left and character.left < block_rect.right):
-        return True
-    return False
 
 # 게임 루프
 running = True
@@ -159,6 +155,14 @@ additional_block_added_2 = False
 moving_block_triggered = False  # 움직이는 블록이 생성되었는지 여부
 block_spawned = False  # 블록이 생성되지 않은 상태로 초기화
 camera_x = 0  # 카메라 초기화
+
+# 캐릭터의 상단이 블록의 하단에 닿을 때
+def check_top_collision(character, block):
+    block_rect = pygame.Rect(block.x, block.y, platform_width, platform_height)
+    if (character.top <= block_rect.bottom and character.bottom > block_rect.bottom and
+            character.right > block_rect.left and character.left < block_rect.right):
+        return True
+    return False
 
 # 게임 루프 내 충돌 검사 및 처리 부분 수정
 while running:
@@ -194,23 +198,17 @@ while running:
     if character_y > SCREEN_HEIGHT:
         reset_game()
 
-    # 바닥을 떨어뜨릴 조건 체크
-    if 680 <= character_x <= 700 and character_y == 500:
-        floor_dropped = True
+    # y가 600을 넘으면 게임 리셋
+    if character_y > SCREEN_HEIGHT:
+        reset_game()
 
     # 바닥과의 충돌 체크
     is_on_ground = False
-    if floor_dropped:
-        if character_y >= floor_y - character_height and not (floor_hole_start < character_x < floor_hole_end):
-            character_y = drop_y - character_height
+    if character_y >= floor_y - character_height:
+        if not (floor_hole_start < character_x < floor_hole_end):
+            character_y = floor_y - character_height
             vertical_momentum = 0
             is_on_ground = True
-    else:
-        if character_y >= floor_y - character_height:
-            if not (floor_hole_start < character_x < floor_hole_end):
-                character_y = floor_y - character_height
-                vertical_momentum = 0
-                is_on_ground = True
 
     # 화면 중앙으로 카메라 위치 조정 (오른쪽으로 갈 때만)
     if character_x > SCREEN_WIDTH // 2:
@@ -220,12 +218,8 @@ while running:
         camera_x = 0
 
     # 바닥 그리기
-    if floor_dropped:
-        pygame.draw.rect(screen, FLOOR_COLOR, (0 - camera_x, drop_y, max_map_width, floor_height))
-        pygame.draw.rect(screen, WHITE, (floor_hole_start - camera_x, floor_y, floor_hole_end - floor_hole_start, floor_height))
-    else:
-        pygame.draw.rect(screen, FLOOR_COLOR, (0 - camera_x, floor_y, floor_hole_start - camera_x, floor_height))
-        pygame.draw.rect(screen, FLOOR_COLOR, (floor_hole_end - camera_x, floor_y, max_map_width - floor_hole_end, floor_height))
+    pygame.draw.rect(screen, FLOOR_COLOR, (0 - camera_x, floor_y, floor_hole_start - camera_x, floor_height))
+    pygame.draw.rect(screen, FLOOR_COLOR, (floor_hole_end - camera_x, floor_y, max_map_width - floor_hole_end, floor_height))
 
     # 충돌 검사 및 처리
     block_collided = check_collision(character_rect, blocks)
