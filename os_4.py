@@ -46,8 +46,7 @@ trick_hole_x, trick_hole_y = 700, floor_y
 trick_hole_visible = False
 trick_hole_speed = 2  # 트릭홀이 내려가는 속도
 
-# trigger 영역 추가
-trigger_zone = pygame.Rect(680, 530, 15, 15)
+
 
 # 점프 블록
 class Block:
@@ -79,6 +78,7 @@ del_block_1 = pygame.Rect(220, 350, 100, 100)
 add_block_1 = pygame.Rect(50, 340, 30, 30)
 trigger_moving_block_zone = pygame.Rect(160, 220, 30, 30)
 clock = pygame.time.Clock()
+trigger_zone = pygame.Rect(800, 530, 15, 15)
 
 # 폰트 설정
 font = pygame.font.Font(None, 20)
