@@ -165,7 +165,6 @@ def reset_game():
     spike_positions = [(x, floor_y - spike_height) for x in range(550, 600, spike_width)]  # 가시 위치 초기화
     spike_triggered = False  # 가시 트리거 초기화
 
-
 # 게임 루프
 running = True
 vertical_momentum = 0
