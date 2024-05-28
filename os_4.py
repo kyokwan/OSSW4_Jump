@@ -144,7 +144,7 @@ drop_y = SCREEN_HEIGHT - floor_height + 200  # 떨어진 바닥의 y 좌표
 
 # 게임 초기화
 def reset_game():
-    global character_x, character_y, vertical_momentum, is_on_ground, blocks, additional_block_added_1, additional_block_added_2, moving_block_triggered, block_spawn_time, block_spawned, camera_x, trick_hole_visible, trick_hole_y, falling_block, spike_height, spike_positions
+    global character_x, character_y, vertical_momentum, is_on_ground, blocks, additional_block_added_1, additional_block_added_2, moving_block_triggered, block_spawn_time, block_spawned, camera_x, trick_hole_visible, trick_hole_y, falling_block, spike_height, spike_positions, spike_triggered
     character_x, character_y = 30, SCREEN_HEIGHT - character_height * 2
     vertical_momentum = 0
     is_on_ground = True
@@ -163,6 +163,7 @@ def reset_game():
     falling_block.is_visible = False  # 초기에는 보이지 않도록 설정
     spike_height = 20  # 가시 높이 초기화
     spike_positions = [(x, floor_y - spike_height) for x in range(550, 600, spike_width)]  # 가시 위치 초기화
+    spike_triggered = False  # 가시 트리거 초기화
 
 
 # 게임 루프
