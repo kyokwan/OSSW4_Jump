@@ -305,7 +305,7 @@ while running:
 
     # 가시 !
     if check_trigger_zone_collision(character_rect, spike_trigger_zone):
-        spike_height = 100  # 높이 변경
+        spike_height = 110  # 높이 변경
         spike_positions = [(x, floor_y - spike_height) for x in range(550, 600, spike_width)]
     
     for spike in spike_positions:
