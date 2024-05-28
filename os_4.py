@@ -46,8 +46,6 @@ trick_hole_x, trick_hole_y = 700, floor_y
 trick_hole_visible = False
 trick_hole_speed = 2  # 트릭홀이 내려가는 속도
 
-
-
 # 점프 블록
 class Block:
     def __init__(self, x, y, speed=0, cloud=False):
@@ -77,6 +75,7 @@ blocks = load_map(map_modules[current_map_index])
 del_block_1 = pygame.Rect(220, 350, 100, 100)
 add_block_1 = pygame.Rect(50, 340, 30, 30)
 trigger_moving_block_zone = pygame.Rect(160, 220, 30, 30)
+trigger_falling_block_zone = pygame.Rect(300, 300, 50, 50)  # 트리거 영역 추가
 clock = pygame.time.Clock()
 trigger_zone = pygame.Rect(680, 530, 250, 15)
 
@@ -86,6 +85,10 @@ font = pygame.font.Font(None, 20)
 # 타이머 설정
 block_spawn_time = 0
 block_spawn_delay = 2  # 2초 후 블록 생성
+
+# 떨어지는 블록 설정
+falling_block = Block(400, 0, speed=5)
+falling_block.is_visible = False  # 초기에는 보이지 않도록 설정
 
 def check_collision(character, blocks):
     for block in blocks:
@@ -114,6 +117,13 @@ def check_spike_collision(character, spikes):
 def check_trigger_zone_collision(character, trigger_zone):
     return character.colliderect(trigger_zone)
 
+# 떨어지는 블록 충돌 감지
+def check_falling_block_collision(character, block):
+    block_rect = pygame.Rect(block.x, block.y, platform_width, platform_height)
+    if character.colliderect(block_rect):
+        return True
+    return False
+
 # 다음 맵 로드
 def load_next_map():
     global current_map_index, character_x, character_y, blocks, camera_x
@@ -133,7 +143,7 @@ drop_y = SCREEN_HEIGHT - floor_height + 200  # 떨어진 바닥의 y 좌표
 
 # 게임 초기화
 def reset_game():
-    global character_x, character_y, vertical_momentum, is_on_ground, blocks, additional_block_added_1, additional_block_added_2, moving_block_triggered, block_spawn_time, block_spawned, camera_x, trick_hole_visible, trick_hole_y
+    global character_x, character_y, vertical_momentum, is_on_ground, blocks, additional_block_added_1, additional_block_added_2, moving_block_triggered, block_spawn_time, block_spawned, camera_x, trick_hole_visible, trick_hole_y, falling_block
     character_x, character_y = 30, SCREEN_HEIGHT - character_height * 2
     vertical_momentum = 0
     is_on_ground = True
@@ -148,6 +158,8 @@ def reset_game():
         block.is_visible = True
     trick_hole_visible = False  # 트릭 홀 초기화
     trick_hole_y = floor_y  # 트릭홀 위치 초기화
+    falling_block = Block(400, 0, speed=5)  # 떨어지는 블록 초기화
+    falling_block.is_visible = False  # 초기에는 보이지 않도록 설정
 
 # 게임 루프
 running = True
@@ -193,18 +205,15 @@ while running:
     if keys[pygame.K_RIGHT]:
         character_x += character_speed
 
-    # 화면 범위 제한, 바닥 충돌 처리
-    character_x = max(0, character_x)  # 캐릭터가 왼쪽으로 화면을 벗어나지 못하게 제한
-    character_x = min(character_x, max_map_width - character_width)  # 캐릭터가 오른쪽으로 맵의 끝을 벗어나지 못하게 제한
+    character_x = max(0, character_x)
+    character_x = min(character_x, max_map_width - character_width)
 
     vertical_momentum += gravity
     character_y += vertical_momentum
 
-    # y가 600을 넘으면 게임 리셋
     if character_y > SCREEN_HEIGHT:
         reset_game()
 
-    # 바닥과의 충돌 체크
     is_on_ground = False
     if character_y >= floor_y - character_height:
         is_in_hole = False
@@ -212,25 +221,22 @@ while running:
             if hole_start < character_x < hole_end:
                 is_in_hole = True
                 break
-        
+
         if not is_in_hole:
             character_y = floor_y - character_height
             vertical_momentum = 0
             is_on_ground = True
 
-    # 화면 중앙으로 카메라 위치 조정 (오른쪽으로 갈 때만)
     if character_x > SCREEN_WIDTH // 2:
         camera_x = character_x - SCREEN_WIDTH // 2
         camera_x = min(camera_x, max_map_width - SCREEN_WIDTH)
     else:
         camera_x = 0
 
-    # 바닥 그리기
     pygame.draw.rect(screen, FLOOR_COLOR, (0 - camera_x, floor_y, max_map_width, floor_height))
     for hole_start, hole_end in floor_holes:
         pygame.draw.rect(screen, WHITE, (hole_start - camera_x, floor_y, hole_end - hole_start, floor_height))
 
-    # trick_hole 그리기
     if trick_hole_visible:
         pygame.draw.rect(screen, WHITE, (trick_hole_x - camera_x, trick_hole_y, 30, floor_height))
         if trick_hole_y < SCREEN_HEIGHT:
@@ -238,7 +244,16 @@ while running:
     else:
         pygame.draw.rect(screen, FLOOR_COLOR, (trick_hole_x - camera_x, floor_y, 220, floor_height))
 
-    # 충돌 검사 및 처리
+    if check_trigger_zone_collision(character_rect, trigger_falling_block_zone):
+        falling_block.is_visible = True
+
+    if falling_block.is_visible:
+        falling_block.y += falling_block.speed
+        pygame.draw.rect(screen, platform_color, (falling_block.x - camera_x, falling_block.y, platform_width, platform_height))
+
+    if check_falling_block_collision(character_rect, falling_block):
+        reset_game()
+
     block_collided = check_collision(character_rect, blocks)
     if block_collided:
         if vertical_momentum > 0:
@@ -247,64 +262,54 @@ while running:
             is_on_ground = True
         elif check_top_collision(character_rect, block_collided):
             character_y = block_collided.y + platform_height
-            vertical_momentum = gravity  # 반대 방향으로 튕겨나기
+            vertical_momentum = gravity
             is_on_ground = False
 
-    # 가시 충돌 검사
     if check_spike_collision(character_rect, spike_positions):
         reset_game()
 
-    # 특정 영역 충돌 검사 및 처리
     if check_trigger_zone_collision(character_rect, trigger_zone):
-        trick_hole_visible = True  # 트릭 홀 활성화
+        trick_hole_visible = True
         
     if check_trigger_zone_collision(character_rect, del_block_1):
         blocks[1].is_visible = False
         
-    # 움직이는 블록 생성 트리거
     if check_trigger_zone_collision(character_rect, trigger_moving_block_zone) and not moving_block_triggered and not block_spawned:
-        block_spawn_time = pygame.time.get_ticks()  # 현재 시간 저장
+        block_spawn_time = pygame.time.get_ticks()
         moving_block_triggered = True
 
     if moving_block_triggered and not block_spawned and (pygame.time.get_ticks() - block_spawn_time) >= block_spawn_delay * 400:
-        moving_block = Block(-platform_width, 230, speed=9)  # 왼쪽에서 오른쪽으로 이동하는 블록
+        moving_block = Block(-platform_width, 230, speed=9)
         blocks.append(moving_block)
-        block_spawned = True  # 블록이 생성되었음을 표시
+        block_spawned = True
 
-    # 추가 블록 영역 충돌 검사
     if character_rect.colliderect(add_block_1) and not additional_block_added_1:
         blocks.append(Block(50, 375))
         additional_block_added_1 = True
 
-    # 블록 이동 및 충돌 검사
     for block in blocks:
         if block.speed != 0:
             block.move()
             if block.is_visible and character_rect.colliderect(pygame.Rect(block.x, block.y, platform_width, platform_height)):
                 reset_game()
 
-    # 발판
     for block in blocks:
         if block.is_visible:
             pygame.draw.rect(screen, platform_color, (block.x - camera_x, block.y, platform_width, platform_height))
-            # 발판 위치 좌표
             text = font.render(f"({block.x}, {block.y})", True, RED)
             screen.blit(text, (block.x - camera_x, block.y - 20))
 
-    # 가시 그리기
     for spike in spike_positions:
         pygame.draw.rect(screen, SPIKE_COLOR, (spike[0] - camera_x, spike[1], spike_width, spike_height))
 
-    # 충돌 영역 그리기 (디버깅용)
     pygame.draw.rect(screen, (0, 0, 0), del_block_1.move(-camera_x, 0), 2)
     pygame.draw.rect(screen, (0, 255, 0), add_block_1.move(-camera_x, 0), 2)
     pygame.draw.rect(screen, (0, 0, 255), trigger_moving_block_zone.move(-camera_x, 0), 2)
     pygame.draw.rect(screen, (0, 255, 0), trigger_zone.move(-camera_x, 0), 2)
 
-    # 캐릭터
     pygame.draw.rect(screen, RED, character_rect.move(-camera_x, 0))
     pygame.display.update()
-    clock.tick(60)  # 프레임 속도 유지
+    clock.tick(60)
 
 pygame.quit()
 sys.exit()
