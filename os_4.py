@@ -7,7 +7,7 @@ pygame.init()
 # 화면 크기 설정
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("점프 점프")
+pygame.display.setCaption("점프 점프")
 
 # 색깔
 WHITE = (255, 255, 255)
@@ -75,7 +75,7 @@ blocks = load_map(map_modules[current_map_index])
 del_block_1 = pygame.Rect(220, 350, 100, 100)
 add_block_1 = pygame.Rect(50, 340, 30, 30)
 trigger_moving_block_zone = pygame.Rect(160, 220, 30, 30)
-trigger_falling_block_zone = pygame.Rect(300, 300, 50, 50)  # 트리거 영역 추가
+trigger_falling_block_zone = pygame.Rect(800, 320, 10, 10)  # 트리거 영역 추가
 clock = pygame.time.Clock()
 trigger_zone = pygame.Rect(680, 530, 250, 15)
 
@@ -87,7 +87,7 @@ block_spawn_time = 0
 block_spawn_delay = 2  # 2초 후 블록 생성
 
 # 떨어지는 블록 설정
-falling_block = Block(400, 0, speed=5)
+falling_block = Block(800, 0, speed=5)
 falling_block.is_visible = False  # 초기에는 보이지 않도록 설정
 
 def check_collision(character, blocks):
@@ -158,7 +158,7 @@ def reset_game():
         block.is_visible = True
     trick_hole_visible = False  # 트릭 홀 초기화
     trick_hole_y = floor_y  # 트릭홀 위치 초기화
-    falling_block = Block(400, 0, speed=5)  # 떨어지는 블록 초기화
+    falling_block = Block(800, 0, speed=5)  # 떨어지는 블록 초기화
     falling_block.is_visible = False  # 초기에는 보이지 않도록 설정
 
 # 게임 루프
