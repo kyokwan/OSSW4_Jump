@@ -305,9 +305,10 @@ while running:
             screen.blit(text, (block.x - camera_x, block.y - 20))
 
     # 가시 !
-    if check_trigger_zone_collision(character_rect, spike_trigger_zone):
-        spike_height = 110  # 높이 변경
+    if check_trigger_zone_collision(character_rect, spike_trigger_zone) and not spike_triggered:
+        spike_height = 100  # 높이 변경
         spike_positions = [(x, floor_y - spike_height) for x in range(550, 600, spike_width)]
+        spike_triggered = True  # 가시 트리거 상태 변경
     
     for spike in spike_positions:
         pygame.draw.rect(screen, SPIKE_COLOR, (spike[0] - camera_x, spike[1], spike_width, spike_height))
