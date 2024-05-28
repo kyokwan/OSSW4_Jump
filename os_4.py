@@ -75,9 +75,9 @@ blocks = load_map(map_modules[current_map_index])
 del_block_1 = pygame.Rect(220, 350, 100, 100)
 add_block_1 = pygame.Rect(50, 340, 30, 30)
 trigger_moving_block_zone = pygame.Rect(160, 220, 30, 30)
-trigger_falling_block_zone = pygame.Rect(800, 320, 50, 10)  # 트리거 영역 추가
+trigger_falling_block_zone = pygame.Rect(800, 320, 50, 10)  # 트리거 영역 수정
 clock = pygame.time.Clock()
-trigger_zone = pygame.Rect(680, 530, 250, 13)
+trigger_zone = pygame.Rect(680, 530, 250, 15)
 
 # 폰트 설정
 font = pygame.font.Font(None, 20)
@@ -87,8 +87,8 @@ block_spawn_time = 0
 block_spawn_delay = 2  # 2초 후 블록 생성
 
 # 떨어지는 블록 설정
-falling_block = Block(800, 0, speed=20)
-falling_block.is_visible = False 
+falling_block = Block(800, 0, speed=10)  # 속도를 2배로 빠르게 설정
+falling_block.is_visible = False  # 초기에는 보이지 않도록 설정
 
 def check_collision(character, blocks):
     for block in blocks:
@@ -158,7 +158,7 @@ def reset_game():
         block.is_visible = True
     trick_hole_visible = False  # 트릭 홀 초기화
     trick_hole_y = floor_y  # 트릭홀 위치 초기화
-    falling_block = Block(800, 0, speed=5)  # 떨어지는 블록 초기화
+    falling_block = Block(800, 0, speed=10)  # 속도를 2배로 빠르게 설정
     falling_block.is_visible = False  # 초기에는 보이지 않도록 설정
 
 # 게임 루프
@@ -240,7 +240,7 @@ while running:
     if trick_hole_visible:
         pygame.draw.rect(screen, WHITE, (trick_hole_x - camera_x, trick_hole_y, 30, floor_height))
         if trick_hole_y < SCREEN_HEIGHT:
-            trick_hole_y += trick_hole_speed  
+            trick_hole_y += trick_hole_speed  # 트릭홀의 y 좌표를 점진적으로 증가시킴
     else:
         pygame.draw.rect(screen, FLOOR_COLOR, (trick_hole_x - camera_x, floor_y, 220, floor_height))
 
@@ -302,11 +302,13 @@ while running:
     for spike in spike_positions:
         pygame.draw.rect(screen, SPIKE_COLOR, (spike[0] - camera_x, spike[1], spike_width, spike_height))
 
+    # 트리거 영역 그리기
+    pygame.draw.rect(screen, (0, 255, 0), trigger_falling_block_zone.move(-camera_x, 0), 2)
+
     pygame.draw.rect(screen, (0, 0, 0), del_block_1.move(-camera_x, 0), 2)
     pygame.draw.rect(screen, (0, 255, 0), add_block_1.move(-camera_x, 0), 2)
     pygame.draw.rect(screen, (0, 0, 255), trigger_moving_block_zone.move(-camera_x, 0), 2)
     pygame.draw.rect(screen, (0, 255, 0), trigger_zone.move(-camera_x, 0), 2)
-    pygame.draw.rect(screen, (0, 255, 0), trigger_falling_block_zone.move(-camera_x, 0), 2)
 
     pygame.draw.rect(screen, RED, character_rect.move(-camera_x, 0))
     pygame.display.update()
