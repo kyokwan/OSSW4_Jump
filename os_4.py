@@ -78,9 +78,8 @@ trigger_moving_block_zone = pygame.Rect(160, 220, 30, 30)
 trigger_falling_block_zone = pygame.Rect(800, 320, 50, 10)  # 트리거 영역 수정
 clock = pygame.time.Clock()
 trigger_zone = pygame.Rect(680, 530, 250, 15)
-
-# 가시 높이 변경 트리거 영역 설정
 spike_trigger_zone = pygame.Rect(550, 495, 20, 40)
+
 
 # 폰트 설정
 font = pygame.font.Font(None, 20)
@@ -303,9 +302,9 @@ while running:
             text = font.render(f"({block.x}, {block.y})", True, RED)
             screen.blit(text, (block.x - camera_x, block.y - 20))
 
-    # 캐릭터가 스파이크 트리거 존에 들어오면 스파이크 높이 변경
+    # 가시 높이
     if check_trigger_zone_collision(character_rect, spike_trigger_zone):
-        spike_height = 60  # 스파이크 높이 변경
+        spike_height = 90  
         spike_positions = [(x, floor_y - spike_height) for x in range(550, 600, spike_width)]
     
     for spike in spike_positions:
