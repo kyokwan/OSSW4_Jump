@@ -78,8 +78,9 @@ trigger_moving_block_zone = pygame.Rect(160, 220, 30, 30)
 trigger_falling_block_zone = pygame.Rect(800, 320, 50, 10)  # 트리거 영역 수정
 clock = pygame.time.Clock()
 trigger_zone = pygame.Rect(680, 530, 250, 15)
-spike_trigger_zone = pygame.Rect(550, 495, 20, 40)
 
+# 가시 높이 변경 트리거 영역 설정
+spike_trigger_zone = pygame.Rect(550, 595, 20, 40)
 
 # 폰트 설정
 font = pygame.font.Font(None, 20)
@@ -145,7 +146,7 @@ drop_y = SCREEN_HEIGHT - floor_height + 200  # 떨어진 바닥의 y 좌표
 
 # 게임 초기화
 def reset_game():
-    global character_x, character_y, vertical_momentum, is_on_ground, blocks, additional_block_added_1, additional_block_added_2, moving_block_triggered, block_spawn_time, block_spawned, camera_x, trick_hole_visible, trick_hole_y, falling_block, spike_height
+    global character_x, character_y, vertical_momentum, is_on_ground, blocks, additional_block_added_1, additional_block_added_2, moving_block_triggered, block_spawn_time, block_spawned, camera_x, trick_hole_visible, trick_hole_y, falling_block, spike_height, spike_positions
     character_x, character_y = 30, SCREEN_HEIGHT - character_height * 2
     vertical_momentum = 0
     is_on_ground = True
@@ -163,6 +164,7 @@ def reset_game():
     falling_block = Block(800, 0, speed=10)  # 속도를 2배로 빠르게 설정
     falling_block.is_visible = False  # 초기에는 보이지 않도록 설정
     spike_height = 20  # 가시 높이 초기화
+    spike_positions = [(x, floor_y - spike_height) for x in range(550, 600, spike_width)]  # 가시 위치 초기화
 
 # 게임 루프
 running = True
@@ -302,9 +304,9 @@ while running:
             text = font.render(f"({block.x}, {block.y})", True, RED)
             screen.blit(text, (block.x - camera_x, block.y - 20))
 
-    # 가시 높이
+    # 캐릭터가 스파이크 트리거 존에 들어오면 스파이크 높이 변경
     if check_trigger_zone_collision(character_rect, spike_trigger_zone):
-        spike_height = 90  
+        spike_height = 60  # 스파이크 높이 변경
         spike_positions = [(x, floor_y - spike_height) for x in range(550, 600, spike_width)]
     
     for spike in spike_positions:
