@@ -87,8 +87,8 @@ block_spawn_time = 0
 block_spawn_delay = 2  # 2초 후 블록 생성
 
 # 떨어지는 블록 설정
-falling_block = Block(800, 0, speed=5)
-falling_block.is_visible = False  # 초기에는 보이지 않도록 설정
+falling_block = Block(800, 0, speed=14)
+falling_block.is_visible = False 
 
 def check_collision(character, blocks):
     for block in blocks:
