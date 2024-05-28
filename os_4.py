@@ -79,6 +79,9 @@ trigger_falling_block_zone = pygame.Rect(800, 320, 50, 10)  # 트리거 영역 �
 clock = pygame.time.Clock()
 trigger_zone = pygame.Rect(680, 530, 250, 15)
 
+# 가시 높이 변경 트리거 영역 설정
+spike_trigger_zone = pygame.Rect(550, 595, 20, 40)
+
 # 폰트 설정
 font = pygame.font.Font(None, 20)
 
@@ -143,7 +146,7 @@ drop_y = SCREEN_HEIGHT - floor_height + 200  # 떨어진 바닥의 y 좌표
 
 # 게임 초기화
 def reset_game():
-    global character_x, character_y, vertical_momentum, is_on_ground, blocks, additional_block_added_1, additional_block_added_2, moving_block_triggered, block_spawn_time, block_spawned, camera_x, trick_hole_visible, trick_hole_y, falling_block
+    global character_x, character_y, vertical_momentum, is_on_ground, blocks, additional_block_added_1, additional_block_added_2, moving_block_triggered, block_spawn_time, block_spawned, camera_x, trick_hole_visible, trick_hole_y, falling_block, spike_height
     character_x, character_y = 30, SCREEN_HEIGHT - character_height * 2
     vertical_momentum = 0
     is_on_ground = True
@@ -160,6 +163,7 @@ def reset_game():
     trick_hole_y = floor_y  # 트릭홀 위치 초기화
     falling_block = Block(800, 0, speed=10)  # 속도를 2배로 빠르게 설정
     falling_block.is_visible = False  # 초기에는 보이지 않도록 설정
+    spike_height = 20  # 가시 높이 초기화
 
 # 게임 루프
 running = True
@@ -299,16 +303,21 @@ while running:
             text = font.render(f"({block.x}, {block.y})", True, RED)
             screen.blit(text, (block.x - camera_x, block.y - 20))
 
+    # 캐릭터가 스파이크 트리거 존에 들어오면 스파이크 높이 변경
+    if check_trigger_zone_collision(character_rect, spike_trigger_zone):
+        spike_height = 60  # 스파이크 높이 변경
+        spike_positions = [(x, floor_y - spike_height) for x in range(550, 600, spike_width)]
+    
     for spike in spike_positions:
         pygame.draw.rect(screen, SPIKE_COLOR, (spike[0] - camera_x, spike[1], spike_width, spike_height))
 
     # 트리거 영역 그리기
     pygame.draw.rect(screen, (0, 255, 0), trigger_falling_block_zone.move(-camera_x, 0), 2)
-
     pygame.draw.rect(screen, (0, 0, 0), del_block_1.move(-camera_x, 0), 2)
     pygame.draw.rect(screen, (0, 255, 0), add_block_1.move(-camera_x, 0), 2)
     pygame.draw.rect(screen, (0, 0, 255), trigger_moving_block_zone.move(-camera_x, 0), 2)
     pygame.draw.rect(screen, (0, 255, 0), trigger_zone.move(-camera_x, 0), 2)
+    pygame.draw.rect(screen, (0, 0, 255), spike_trigger_zone.move(-camera_x, 0), 2)  # 스파이크 트리거 영역 그리기
 
     pygame.draw.rect(screen, RED, character_rect.move(-camera_x, 0))
     pygame.display.update()
