@@ -78,9 +78,7 @@ trigger_moving_block_zone = pygame.Rect(160, 220, 30, 30)
 trigger_falling_block_zone = pygame.Rect(800, 320, 50, 10)  # 트리거 영역 수정
 clock = pygame.time.Clock()
 trigger_zone = pygame.Rect(680, 530, 250, 15)
-
-# 가시 높이 변경 트리거 영역 설정
-spike_trigger_zone = pygame.Rect(550, 595, 20, 40)
+spike_trigger_zone = pygame.Rect(550, 495, 20, 60)
 
 # 폰트 설정
 font = pygame.font.Font(None, 20)
