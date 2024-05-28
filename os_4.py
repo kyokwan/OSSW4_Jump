@@ -75,7 +75,7 @@ blocks = load_map(map_modules[current_map_index])
 del_block_1 = pygame.Rect(220, 350, 100, 100)
 add_block_1 = pygame.Rect(50, 340, 30, 30)
 trigger_moving_block_zone = pygame.Rect(160, 220, 30, 30)
-trigger_falling_block_zone = pygame.Rect(800, 320, 10, 10)  # 트리거 영역 추가
+trigger_falling_block_zone = pygame.Rect(800, 320, 50, 10)  # 트리거 영역 추가
 clock = pygame.time.Clock()
 trigger_zone = pygame.Rect(680, 530, 250, 15)
 
@@ -87,7 +87,7 @@ block_spawn_time = 0
 block_spawn_delay = 2  # 2초 후 블록 생성
 
 # 떨어지는 블록 설정
-falling_block = Block(800, 0, speed=14)
+falling_block = Block(800, 0, speed=20)
 falling_block.is_visible = False 
 
 def check_collision(character, blocks):
