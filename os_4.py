@@ -80,7 +80,7 @@ clock = pygame.time.Clock()
 trigger_zone = pygame.Rect(680, 530, 250, 15)
 
 # 가시 높이 변경 트리거 영역 설정
-spike_trigger_zone = pygame.Rect(550, 595, 20, 40)
+spike_trigger_zone = pygame.Rect(550, 495, 20, 40)
 
 # 폰트 설정
 font = pygame.font.Font(None, 20)
