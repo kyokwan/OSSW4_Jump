@@ -159,7 +159,7 @@ def reset_game():
         block.is_visible = True
     trick_hole_visible = False  # 트릭 홀 초기화
     trick_hole_y = floor_y  # 트릭홀 위치 초기화
-    falling_block = Block(800, 0, speed=10)  # 속도를 2배로 빠르게 설정
+    falling_block = Block(800, 0, speed=10)  # 속도를 2배
     falling_block.is_visible = False  # 초기에는 보이지 않도록 설정
     spike_height = 20  # 가시 높이 초기화
     spike_positions = [(x, floor_y - spike_height) for x in range(550, 600, spike_width)]  # 가시 위치 초기화
@@ -302,9 +302,9 @@ while running:
             text = font.render(f"({block.x}, {block.y})", True, RED)
             screen.blit(text, (block.x - camera_x, block.y - 20))
 
-    # 캐릭터가 스파이크 트리거 존에 들어오면 스파이크 높이 변경
+    # 가시 !
     if check_trigger_zone_collision(character_rect, spike_trigger_zone):
-        spike_height = 60  # 스파이크 높이 변경
+        spike_height = 100  # 높이 변경
         spike_positions = [(x, floor_y - spike_height) for x in range(550, 600, spike_width)]
     
     for spike in spike_positions:
@@ -316,7 +316,7 @@ while running:
     pygame.draw.rect(screen, (0, 255, 0), add_block_1.move(-camera_x, 0), 2)
     pygame.draw.rect(screen, (0, 0, 255), trigger_moving_block_zone.move(-camera_x, 0), 2)
     pygame.draw.rect(screen, (0, 255, 0), trigger_zone.move(-camera_x, 0), 2)
-    pygame.draw.rect(screen, (0, 0, 255), spike_trigger_zone.move(-camera_x, 0), 2)  # 스파이크 트리거 영역 그리기
+    pygame.draw.rect(screen, (0, 0, 255), spike_trigger_zone.move(-camera_x, 0), 2)  
 
     pygame.draw.rect(screen, RED, character_rect.move(-camera_x, 0))
     pygame.display.update()
