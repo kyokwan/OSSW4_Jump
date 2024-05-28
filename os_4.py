@@ -7,7 +7,7 @@ pygame.init()
 # 화면 크기 설정
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.setCaption("점프 점프")
+pygame.display.set_caption("점프 점프")
 
 # 색깔
 WHITE = (255, 255, 255)
@@ -240,7 +240,7 @@ while running:
     if trick_hole_visible:
         pygame.draw.rect(screen, WHITE, (trick_hole_x - camera_x, trick_hole_y, 30, floor_height))
         if trick_hole_y < SCREEN_HEIGHT:
-            trick_hole_y += trick_hole_speed  # 트릭홀의 y 좌표를 점진적으로 증가시킴
+            trick_hole_y += trick_hole_speed  
     else:
         pygame.draw.rect(screen, FLOOR_COLOR, (trick_hole_x - camera_x, floor_y, 220, floor_height))
 
