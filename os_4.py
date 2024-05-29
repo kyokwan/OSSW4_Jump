@@ -48,6 +48,7 @@ portal_size = 70
 # 포탈 이미지 로드
 portal_image = pygame.image.load('portal_image.png')
 portal_image = pygame.transform.scale(portal_image, (portal_size, portal_size))
+portal_angle = 0  # 포탈 회전 각도 초기화
 
 # trick_hole 속성 추가
 trick_hole_x, trick_hole_y = 700, floor_y
@@ -332,8 +333,11 @@ while running:
     pygame.draw.rect(screen, (0, 255, 0), trigger_zone.move(-camera_x, 0), 2)
     pygame.draw.rect(screen, (0, 0, 255), spike_trigger_zone.move(-camera_x, 0), 2)  
 
-    # 포탈 이미지 그리기
-    screen.blit(portal_image, (portal_position[0] - camera_x, portal_position[1]))
+    # 포탈 이미지 회전
+    portal_angle += 2  # 회전 속도 
+    rotated_portal_image = pygame.transform.rotate(portal_image, portal_angle)
+    portal_rect = rotated_portal_image.get_rect(center=(portal_position[0] - camera_x + portal_size // 2, portal_position[1] + portal_size // 2))
+    screen.blit(rotated_portal_image, portal_rect.topleft)
 
     # 포탈 충돌 감지 및 다음 맵 로드
     if check_portal_collision(character_rect, portal_position, portal_size):
