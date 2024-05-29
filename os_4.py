@@ -13,7 +13,6 @@ pygame.display.set_caption("점프 점프")
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
-YELLOW = (255, 255, 0)  # 포탈 색
 FLOOR_COLOR = (144, 228, 144)  # 바닥 색
 SPIKE_COLOR = (0, 0, 0)        # 가시 색
 
@@ -44,7 +43,11 @@ floor_holes = Map_1.floor_holes
 
 # 포탈 속성
 portal_position = Map_1.portal_position
-portal_size = 50
+portal_size = 80
+
+# 포탈 이미지 로드
+portal_image = pygame.image.load('portal_image.gif')
+portal_image = pygame.transform.scale(portal_image, (portal_size, portal_size))
 
 # trick_hole 속성 추가
 trick_hole_x, trick_hole_y = 700, floor_y
@@ -144,6 +147,7 @@ def load_next_map():
         camera_x = 0
         blocks = load_map(map_modules[current_map_index])
     else:
+        print("게임 클리어!")
         pygame.quit()
         sys.exit()
 
@@ -328,8 +332,8 @@ while running:
     pygame.draw.rect(screen, (0, 255, 0), trigger_zone.move(-camera_x, 0), 2)
     pygame.draw.rect(screen, (0, 0, 255), spike_trigger_zone.move(-camera_x, 0), 2)  
 
-    # 포탈 그리기
-    pygame.draw.rect(screen, YELLOW, (portal_position[0] - camera_x, portal_position[1], portal_size, portal_size))
+    # 포탈 이미지 그리기
+    screen.blit(portal_image, (portal_position[0] - camera_x, portal_position[1]))
 
     # 포탈 충돌 감지 및 다음 맵 로드
     if check_portal_collision(character_rect, portal_position, portal_size):
