@@ -144,7 +144,6 @@ def load_next_map():
         camera_x = 0
         blocks = load_map(map_modules[current_map_index])
     else:
-        print("게임 클리어!")
         pygame.quit()
         sys.exit()
 
