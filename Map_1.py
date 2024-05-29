@@ -22,5 +22,4 @@ floor_holes = [
     (700, 920)
 ]
 
-
-portal_position = (1100, 50)
+portal_position = (1150, 550)  
