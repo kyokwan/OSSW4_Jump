@@ -1,3 +1,4 @@
+
 import pygame
 import sys
 import Map_1
@@ -240,7 +241,7 @@ while running:
                 is_in_hole = True
                 break
 
-        if not is_in_hole:
+        if not is_in_hole: 
             character_y = floor_y - character_height
             vertical_momentum = 0
             is_on_ground = True
