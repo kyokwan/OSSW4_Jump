@@ -19,4 +19,4 @@ floor_holes = [
 ]
 
 # 포탈 위치
-portal_position = (1150, 550)  
+portal_position = (1150, 500)  
