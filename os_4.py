@@ -46,7 +46,7 @@ portal_position = Map_1.portal_position
 portal_size = 80
 
 # 포탈 이미지 로드
-portal_image = pygame.image.load('portal_image.gif')
+portal_image = pygame.image.load('portal_image.png')
 portal_image = pygame.transform.scale(portal_image, (portal_size, portal_size))
 
 # trick_hole 속성 추가
