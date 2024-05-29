@@ -7,7 +7,7 @@ pygame.init()
 # 화면 크기 설정
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.setCaption("점프 점프")
+pygame.display.set_caption("점프 점프")
 
 # 색깔
 WHITE = (255, 255, 255)
@@ -304,7 +304,7 @@ while running:
 
     for block in blocks:
         if block.is_visible:
-            pygame.draw.rect(screen, platform_color, (block.x - camera_x, block.y, platform_width, platform_height))
+            pygame.draw.rect(screen, platform_color,  (block.x - camera_x, block.y, platform_width, platform_height))
             text = font.render(f"({block.x}, {block.y})", True, RED)
             screen.blit(text, (block.x - camera_x, block.y - 20))
 
