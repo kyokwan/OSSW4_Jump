@@ -91,6 +91,20 @@ block_spawn_delay = 2  # 2초 후 블록 생성
 falling_block = Block(800, 0, speed=10)  # 속도를 2배로 빠르게 설정
 falling_block.is_visible = False  # 초기에는 보이지 않도록 설정
 
+# 변수 초기화
+trick_hole_visible = False
+trick_hole_y = floor_y
+vertical_momentum = 0
+is_on_ground = True
+space_pressed = False
+additional_block_added_1 = False 
+additional_block_added_2 = False 
+moving_block_triggered = False
+block_spawned = False
+camera_x = 0
+floor_dropped = False
+spike_triggered = False
+
 def check_collision(character, blocks):
     for block in blocks:
         if block.is_visible and not block.cloud and character.colliderect(pygame.Rect(block.x, block.y, platform_width, platform_height)):
@@ -144,7 +158,6 @@ def load_next_map():
         sys.exit()
 
 # 바닥 속성을 변경할 변수 추가
-floor_dropped = False
 drop_y = SCREEN_HEIGHT - floor_height + 200  # 떨어진 바닥의 y 좌표
 
 # 게임 초기화
@@ -172,14 +185,6 @@ def reset_game():
 
 # 게임 루프
 running = True
-vertical_momentum = 0
-is_on_ground = True
-space_pressed = False
-additional_block_added_1 = False 
-additional_block_added_2 = False 
-moving_block_triggered = False  # 움직이는 블록이 생성되었는지 여부
-block_spawned = False  # 블록이 생성되지 않은 상태로 초기화
-camera_x = 0  # 카메라 초기화
 
 # 캐릭터의 상단이 블록의 하단에 닿을 때
 def check_top_collision(character, block):
@@ -304,7 +309,7 @@ while running:
 
     for block in blocks:
         if block.is_visible:
-            pygame.draw.rect(screen, platform_color,  (block.x - camera_x, block.y, platform_width, platform_height))
+            pygame.draw.rect(screen, platform_color, (block.x - camera_x, block.y, platform_width, platform_height))
             text = font.render(f"({block.x}, {block.y})", True, RED)
             screen.blit(text, (block.x - camera_x, block.y - 20))
 
