@@ -7,12 +7,13 @@ pygame.init()
 # 화면 크기 설정
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("점프 점프")
+pygame.display.setCaption("점프 점프")
 
 # 색깔
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)  # 포탈 색
 FLOOR_COLOR = (144, 228, 144)  # 바닥 색
 SPIKE_COLOR = (0, 0, 0)        # 가시 색
 
@@ -36,15 +37,10 @@ spike_width, spike_height = 10, 20
 spike_positions = [(x, floor_y - spike_height) for x in range(550, 600, spike_width)]
 
 # 맵의 최대 크기
-max_map_width = 1200  
+max_map_width = 1200
 
 # 바닥 구멍 정보 로드
 floor_holes = Map_1.floor_holes
-
-# trick_hole 속성 추가
-trick_hole_x, trick_hole_y = 700, floor_y
-trick_hole_visible = False
-trick_hole_speed = 2  # 트릭홀이 내려가는 속도
 
 # 포탈 속성
 portal_position = Map_1.portal_position
@@ -329,7 +325,7 @@ while running:
     pygame.draw.rect(screen, (0, 0, 255), spike_trigger_zone.move(-camera_x, 0), 2)  
 
     # 포탈 그리기
-    pygame.draw.rect(screen, RED, (*portal_position, portal_size, portal_size))
+    pygame.draw.rect(screen, YELLOW, (portal_position[0] - camera_x, portal_position[1], portal_size, portal_size))
 
     # 포탈 충돌 감지 및 다음 맵 로드
     if check_portal_collision(character_rect, portal_position, portal_size):
