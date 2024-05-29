@@ -43,7 +43,7 @@ floor_holes = Map_1.floor_holes
 
 # 포탈 속성
 portal_position = Map_1.portal_position
-portal_size = 80
+portal_size = 70
 
 # 포탈 이미지 로드
 portal_image = pygame.image.load('portal_image.png')
