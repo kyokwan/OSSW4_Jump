@@ -195,6 +195,8 @@ additional_block_added_2 = False
 moving_block_triggered = False  
 block_spawned = False  
 camera_x = 0  # 카메라 초기화
+on_jumping_block = False  # 점핑 블럭 상태 초기화
+jump_timer = 0  # 점핑 블럭 타이머 초기화
 
 # 캐릭터의 상단이 블록의 하단에 닿을 때
 def check_top_collision(character, block):
