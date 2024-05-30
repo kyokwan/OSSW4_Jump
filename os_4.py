@@ -86,7 +86,7 @@ add_block_1 = pygame.Rect(50, 340, 30, 30)
 trigger_moving_block_zone = pygame.Rect(160, 220, 30, 30)
 trigger_falling_block_zone = pygame.Rect(800, 320, 50, 10)  # 트리거 영역 수정
 clock = pygame.time.Clock()
-trigger_zone = pygame.Rect(680, 530, 250, 15)
+trigger_zone = pygame.Rect(680, 530, 240, )
 spike_trigger_zone = pygame.Rect(540, 455, 20, 100)
 
 # 폰트 설정
