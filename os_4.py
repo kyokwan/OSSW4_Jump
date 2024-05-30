@@ -70,11 +70,11 @@ class Block:
             if self.x > SCREEN_WIDTH:
                 self.is_visible = False
 
-jumping_block = Block(1100, 400)
+jumping_block = Block(1100, 450)
 jumping_block.is_visible = False
 
 # 트리거 영역
-trigger_zone = pygame.Rect(1100, 350, 20, 20)
+trigger_zone = pygame.Rect(1100, 380, 20, 20)
 
 # 맵 로드
 def load_map(map_module):
