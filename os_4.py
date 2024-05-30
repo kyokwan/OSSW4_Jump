@@ -56,6 +56,7 @@ trick_hole_visible = False
 trick_hole_speed = 2  
 
 # 점프 블록
+# 점프 블록
 class Block:
     def __init__(self, x, y, width, height, speed=0, cloud=False):
         self.x = x
@@ -325,6 +326,7 @@ while running:
         if character_rect.colliderect(pygame.Rect(jumping_block.x, jumping_block.y, jumping_block.width, jumping_block.height)):
             on_jumping_block = True
             jump_timer = pygame.time.get_ticks()
+
 
 
     if on_jumping_block:
