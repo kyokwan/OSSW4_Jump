@@ -278,7 +278,7 @@ trigger_falling_block_zone = pygame.Rect(800, 320, 50, 10)  # 트리거 영역 �
 clock = pygame.time.Clock()
 trigger_zone = pygame.Rect(680, 510, 240, 50)
 spike_trigger_zone = pygame.Rect(540, 455, 20, 100)
-jumping_block = Block(1100, 400)
+jumping_block = Block(1100, 450)
 jumping_block.is_visible = False
 jumping_trigger_zone = pygame.Rect(1100, 410, 20, 20)  # 점핑 블럭 트리거 영역 추가
 
