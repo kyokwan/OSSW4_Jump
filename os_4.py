@@ -76,8 +76,9 @@ class Block:
 
 # 맵 로드
 def load_map(map_module):
-    blocks = [Block(x, y, cloud=(y == 260 and x in [100])) for x, y in map_module.blocks_positions]
+    blocks = [Block(x, y, width=50, height=20, cloud=(y == 260 and x in [100, 160])) for x, y in map_module.blocks_positions]
     return blocks
+
 
 # 초기 맵 설정
 map_modules = [Map_1]
