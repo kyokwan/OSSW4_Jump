@@ -152,7 +152,7 @@ def load_next_map():
         pygame.quit()
         sys.exit()
 
-# 바닥 속성을 변경할 변수 추가
+# 바닥 속성을 변경
 floor_dropped = False
 drop_y = SCREEN_HEIGHT - floor_height + 200  # 떨어진 바닥의 y 좌표
 
@@ -186,8 +186,8 @@ is_on_ground = True
 space_pressed = False
 additional_block_added_1 = False 
 additional_block_added_2 = False 
-moving_block_triggered = False  # 움직이는 블록이 생성되었는지 여부
-block_spawned = False  # 블록이 생성되지 않은 상태로 초기화
+moving_block_triggered = False  
+block_spawned = False  
 camera_x = 0  # 카메라 초기화
 
 # 캐릭터의 상단이 블록의 하단에 닿을 때
