@@ -161,7 +161,7 @@ drop_y = SCREEN_HEIGHT - floor_height + 200  # 떨어진 바닥의 y 좌표
 def reset_game():
     global character_x, character_y, vertical_momentum, is_on_ground, blocks, additional_block_added_1, additional_block_added_2, moving_block_triggered, block_spawn_time, block_spawned, camera_x, trick_hole_visible, trick_hole_y, falling_block, spike_height, spike_positions, spike_triggered
     character_x, character_y = 30, SCREEN_HEIGHT - character_height * 2
-    vertical_momentum = -10
+    vertical_momentum = 0
     is_on_ground = True
     additional_block_added_1 = False  
     additional_block_added_2 = False  
@@ -501,13 +501,14 @@ while running:
 
     if character_rect.colliderect(jumping_trigger_zone):
         jumping_block.is_visible = True
-
+        
     if jumping_block.is_visible:
         pygame.draw.rect(screen, platform_color, (jumping_block.x - camera_x, jumping_block.y, platform_width, platform_height))
         if character_rect.colliderect(pygame.Rect(jumping_block.x, jumping_block.y, platform_width, platform_height)):
             character_y = 0  # 캐릭터를 화면 맨 위로 날려보냄
             is_on_ground = False
-            vertical_momentum = -40  # 위로 날아간 후 다시 떨어지도록 설정
+            vertical_momentum = -2  # 위로 날아가는 속도를 줄임 (기존 값보다 작게 설정)
+
 
     for block in blocks:
         if block.speed != 0:
