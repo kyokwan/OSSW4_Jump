@@ -220,7 +220,7 @@ while running:
             if event.key == pygame.K_SPACE:
                 space_pressed = True
         if event.type == pygame.KEYUP:
-            if event.key == pygame.K_SPACE):
+            if event.key == pygame.K_SPACE:
                 space_pressed = False
 
     if space_pressed and is_on_ground:
