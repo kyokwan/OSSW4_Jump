@@ -56,7 +56,7 @@ trick_hole_visible = False
 trick_hole_speed = 2  # 트릭홀이 내려가는 속도
 
 # 점프 블록의 가로 길이 설정
-jumping_block_width = platform_width + 50 
+jumping_block_width = platform_width + 100
 
 # 점프 블록
 class Block:
