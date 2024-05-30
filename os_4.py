@@ -57,11 +57,9 @@ trick_hole_speed = 2  # 트릭홀이 내려가는 속도
 
 # 점프 블록
 class Block:
-    def __init__(self, x, y, width, height, speed=0, cloud=False):
+    def __init__(self, x, y, speed=0, cloud=False):
         self.x = x
         self.y = y
-        self.width = width
-        self.height = height
         self.speed = speed
         self.cloud = cloud  # 구름 블록 여부
         self.is_visible = True
@@ -74,7 +72,7 @@ class Block:
 
 # 맵 로드
 def load_map(map_module):
-    blocks = [Block(x, y, platform_width, platform_height, cloud=(y == 260 and x in [100])) for x, y in map_module.blocks_positions]
+    blocks = [Block(x, y, cloud=(y == 260 and x in [100])) for x, y in map_module.blocks_positions]
     return blocks
 
 # 초기 맵 설정
@@ -90,9 +88,9 @@ trigger_falling_block_zone = pygame.Rect(800, 320, 50, 10)  # 트리거 영역 �
 clock = pygame.time.Clock()
 trigger_zone = pygame.Rect(680, 510, 240, 50)
 spike_trigger_zone = pygame.Rect(540, 455, 20, 100)
-jumping_block = Block(1100, 400, platform_width + 15, platform_height)
+jumping_block = Block(1100, 450)
 jumping_block.is_visible = False
-jumping_trigger_zone = pygame.Rect(1100, 350, 20, 20)  # 점핑 블럭 트리거 영역 추가
+jumping_trigger_zone = pygame.Rect(1050, 400, 150, 20)  # 점핑 블럭 트리거 영역 추가
 
 # 폰트 설정
 font = pygame.font.Font(None, 20)
@@ -102,21 +100,21 @@ block_spawn_time = 0
 block_spawn_delay = 2  # 2초 후 블록 생성
 
 # 떨어지는 블록 설정
-falling_block = Block(800, 0, platform_width, platform_height, speed=10)  # 속도를 2배로 빠르게 설정
+falling_block = Block(800, 0, speed=10)  # 속도를 2배로 빠르게 설정
 falling_block.is_visible = False  # 초기에는 보이지 않도록 설정
 
 def check_collision(character, blocks):
     for block in blocks:
-        if block.is_visible and not block.cloud and character.colliderect(pygame.Rect(block.x, block.y, block.width, block.height)):
+        if block.is_visible and not block.cloud and character.colliderect(pygame.Rect(block.x, block.y, platform_width, platform_height)):
             return block
     return None
 
 def check_bottom_collision(character, block):
     if block.cloud:  # 구름 블록일 경우
-        if character.bottom >= block.y and character.top < block.y and character.right > block.x and character.left < block.x + block.width:
+        if character.bottom >= block.y and character.top < block.y and character.right > block.x and character.left < block.x + platform_width:
             return True
     else:
-        block_rect = pygame.Rect(block.x, block.y, block.width, block.height)
+        block_rect = pygame.Rect(block.x, block.y, platform_width, platform_height)
         if character.bottom >= block_rect.top and character.top < block_rect.top and character.right > block_rect.left and character.left < block_rect.right:
             return True
     return False
@@ -134,7 +132,7 @@ def check_trigger_zone_collision(character, trigger_zone):
 
 # 떨어지는 블록 충돌 감지
 def check_falling_block_collision(character, block):
-    block_rect = pygame.Rect(block.x, block.y, block.width, block.height)
+    block_rect = pygame.Rect(block.x, block.y, platform_width, platform_height)
     if character.colliderect(block_rect):
         return True
     return False
@@ -178,7 +176,7 @@ def reset_game():
         block.is_visible = True
     trick_hole_visible = False  # 트릭 홀 초기화
     trick_hole_y = floor_y  # 트릭홀 위치 초기화
-    falling_block = Block(800, 0, platform_width, platform_height, speed=10)  # 속도를 2배
+    falling_block = Block(800, 0, speed=10)  # 속도를 2배
     falling_block.is_visible = False  # 초기에는 보이지 않도록 설정
     spike_height = 20  # 가시 높이 초기화
     spike_positions = [(x, floor_y - spike_height) for x in range(550, 600, spike_width)]  # 가시 위치 초기화
@@ -202,7 +200,7 @@ jump_timer = 0  # 점핑 블럭 타이머 초기화
 
 # 캐릭터의 상단이 블록의 하단에 닿을 때
 def check_top_collision(character, block):
-    block_rect = pygame.Rect(block.x, block.y, block.width, block.height)
+    block_rect = pygame.Rect(block.x, block.y, platform_width, platform_height)
     if (character.top <= block_rect.bottom and character.bottom > block_rect.bottom and
             character.right > block_rect.left and character.left < block_rect.right):
         return True
@@ -278,7 +276,7 @@ while running:
 
     if falling_block.is_visible:
         falling_block.y += falling_block.speed
-        pygame.draw.rect(screen, platform_color, (falling_block.x - camera_x, falling_block.y, falling_block.width, falling_block.height))
+        pygame.draw.rect(screen, platform_color, (falling_block.x - camera_x, falling_block.y, platform_width, platform_height))
 
     if check_falling_block_collision(character_rect, falling_block):
         reset_game()
@@ -290,7 +288,7 @@ while running:
             vertical_momentum = 0
             is_on_ground = True
         elif check_top_collision(character_rect, block_collided):
-            character_y = block_collided.y + block_collided.height
+            character_y = block_collided.y + platform_height
             vertical_momentum = gravity
             is_on_ground = False
 
@@ -308,20 +306,20 @@ while running:
         moving_block_triggered = True
 
     if moving_block_triggered and not block_spawned and (pygame.time.get_ticks() - block_spawn_time) >= block_spawn_delay * 400:
-        moving_block = Block(-platform_width, 230, platform_width, platform_height, speed=9)
+        moving_block = Block(-platform_width, 230, speed=9)
         blocks.append(moving_block)
         block_spawned = True
 
     if character_rect.colliderect(add_block_1) and not additional_block_added_1:
-        blocks.append(Block(50, 375, platform_width, platform_height))
+        blocks.append(Block(50, 375))
         additional_block_added_1 = True
 
     if character_rect.colliderect(jumping_trigger_zone):
         jumping_block.is_visible = True
 
     if jumping_block.is_visible:
-        pygame.draw.rect(screen, platform_color, (jumping_block.x - camera_x, jumping_block.y, jumping_block.width, jumping_block.height))
-        if character_rect.colliderect(pygame.Rect(jumping_block.x, jumping_block.y, jumping_block.width, jumping_block.height)):
+        pygame.draw.rect(screen, platform_color, (jumping_block.x - camera_x, jumping_block.y, platform_width, platform_height))
+        if character_rect.colliderect(pygame.Rect(jumping_block.x, jumping_block.y, platform_width, platform_height)):
             on_jumping_block = True
             jump_timer = pygame.time.get_ticks()
 
@@ -335,12 +333,12 @@ while running:
     for block in blocks:
         if block.speed != 0:
             block.move()
-            if block.is_visible and character_rect.colliderect(pygame.Rect(block.x, block.y, block.width, block.height)):
+            if block.is_visible and character_rect.colliderect(pygame.Rect(block.x, block.y, platform_width, platform_height)):
                 reset_game()
 
     for block in blocks:
         if block.is_visible:
-            pygame.draw.rect(screen, platform_color, (block.x - camera_x, block.y, block.width, block.height))
+            pygame.draw.rect(screen, platform_color, (block.x - camera_x, block.y, platform_width, platform_height))
             text = font.render(f"({block.x}, {block.y})", True, RED)
             screen.blit(text, (block.x - camera_x, block.y - 20))
 
