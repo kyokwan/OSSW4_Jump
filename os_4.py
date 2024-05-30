@@ -57,12 +57,15 @@ trick_hole_speed = 2  # 트릭홀이 내려가는 속도
 
 # 점프 블록
 class Block:
-    def __init__(self, x, y, speed=0, cloud=False):
+    def __init__(self, x, y, width, height, speed=0, cloud=False):
         self.x = x
         self.y = y
+        self.width = width
+        self.height = height
         self.speed = speed
         self.cloud = cloud  # 구름 블록 여부
         self.is_visible = True
+
 
     def move(self):
         if self.speed != 0:
