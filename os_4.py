@@ -53,7 +53,7 @@ portal_angle = 0  # 포탈 회전 각도 초기화
 # trick_hole 속성 추가
 trick_hole_x, trick_hole_y = 700, floor_y
 trick_hole_visible = False
-trick_hole_speed = 2  # 트릭홀이 내려가는 속도
+trick_hole_speed = 2  
 
 # 점프 블록
 class Block:
@@ -91,7 +91,7 @@ trigger_falling_block_zone = pygame.Rect(800, 320, 50, 10)  # 트리거 영역 �
 clock = pygame.time.Clock()
 trigger_zone = pygame.Rect(680, 510, 240, 50)
 spike_trigger_zone = pygame.Rect(540, 455, 20, 100)
-jumping_block = Block(1100, 450)
+jumping_block = Block(1100, 400, platform_width + 15, platform_height)
 jumping_block.is_visible = False
 jumping_trigger_zone = pygame.Rect(1050, 400, 150, 20)  # 점핑 블럭 트리거 영역 추가
 
