@@ -56,7 +56,7 @@ trick_hole_visible = False
 trick_hole_speed = 2  # 트릭홀이 내려가는 속도
 
 # 점프 블록의 가로 길이 설정
-jumping_block_width = platform_width + 30 
+jumping_block_width = platform_width + 50 
 
 # 점프 블록
 class Block:
@@ -91,7 +91,7 @@ trigger_falling_block_zone = pygame.Rect(800, 320, 50, 10)  # 트리거 영역 �
 clock = pygame.time.Clock()
 trigger_zone = pygame.Rect(680, 510, 240, 50)
 spike_trigger_zone = pygame.Rect(540, 455, 20, 100)
-jumping_block = Block(1100, 450)
+jumping_block = Block(1050, 450)
 jumping_block.is_visible = False
 jumping_trigger_zone = pygame.Rect(1050, 400, 150, 20)  # 점핑 블럭 트리거 영역 추가
 
