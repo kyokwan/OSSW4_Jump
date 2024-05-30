@@ -129,6 +129,9 @@ is_on_ground = True
 space_pressed = False
 camera_x = 0
 
+# 시계 객체 생성
+clock = pygame.time.Clock()
+
 while running:
     screen.fill(WHITE)
     character_rect = pygame.Rect(character_x, character_y, character_width, character_height)
