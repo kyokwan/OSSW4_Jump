@@ -88,7 +88,8 @@ trigger_falling_block_zone = pygame.Rect(800, 320, 50, 10)  # 트리거 영역 �
 clock = pygame.time.Clock()
 trigger_zone = pygame.Rect(680, 510, 240, 50)
 spike_trigger_zone = pygame.Rect(540, 455, 20, 100)
-
+jumping_block = Block(1100, 400)
+jumping_block.is_visible = False
 # 폰트 설정
 font = pygame.font.Font(None, 20)
 
@@ -178,7 +179,8 @@ def reset_game():
     spike_height = 20  # 가시 높이 초기화
     spike_positions = [(x, floor_y - spike_height) for x in range(550, 600, spike_width)]  # 가시 위치 초기화
     spike_triggered = False  # 가시 트리거 초기화
-
+    jumping_block.is_visible = False  # 점핑 블럭 초기화
+    
 # 게임 루프
 running = True
 vertical_momentum = 0
