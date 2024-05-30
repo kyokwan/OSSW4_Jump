@@ -86,7 +86,7 @@ blocks = load_map(map_modules[current_map_index])
 # 충돌 영역 설정
 del_block_1 = pygame.Rect(220, 350, 100, 100)
 add_block_1 = pygame.Rect(50, 340, 30, 30)
-trigger_moving_block_zone = pygame.Rect(160, 220, 30, 30)
+trigger_moving_block_zone = pygame.Rect(160, 220, 30, 30) 
 trigger_falling_block_zone = pygame.Rect(800, 320, 50, 10)  # 트리거 영역 수정
 clock = pygame.time.Clock()
 trigger_zone = pygame.Rect(680, 510, 240, 50)
@@ -321,10 +321,11 @@ while running:
         jumping_block.is_visible = True
 
     if jumping_block.is_visible:
-        pygame.draw.rect(screen, platform_color, (jumping_block.x - camera_x, jumping_block.y, platform_width, platform_height))
-        if character_rect.colliderect(pygame.Rect(jumping_block.x, jumping_block.y, platform_width, platform_height)):
+        pygame.draw.rect(screen, platform_color, (jumping_block.x - camera_x, jumping_block.y, jumping_block.width, jumping_block.height))
+        if character_rect.colliderect(pygame.Rect(jumping_block.x, jumping_block.y, jumping_block.width, jumping_block.height)):
             on_jumping_block = True
             jump_timer = pygame.time.get_ticks()
+
 
     if on_jumping_block:
         elapsed_time = pygame.time.get_ticks() - jump_timer
