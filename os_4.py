@@ -50,12 +50,12 @@ portal_image = pygame.image.load('portal_image.png')
 portal_image = pygame.transform.scale(portal_image, (portal_size, portal_size))
 portal_angle = 0  # 포탈 회전 각도 초기화
 
-# 트릭홀 속성 추가
+# trick_hole 속성 추가
 trick_hole_x, trick_hole_y = 700, floor_y
 trick_hole_visible = False
 trick_hole_speed = 2  # 트릭홀이 내려가는 속도
 
-# 점프 블럭 속성
+# 점프 블록
 class Block:
     def __init__(self, x, y, speed=0, cloud=False):
         self.x = x
@@ -69,12 +69,6 @@ class Block:
             self.x += self.speed
             if self.x > SCREEN_WIDTH:
                 self.is_visible = False
-
-jumping_block = Block(1100, 450)
-jumping_block.is_visible = False
-
-# 트리거 영역
-trigger_zone = pygame.Rect(1100, 380, 20, 20)
 
 # 맵 로드
 def load_map(map_module):
@@ -92,6 +86,7 @@ add_block_1 = pygame.Rect(50, 340, 30, 30)
 trigger_moving_block_zone = pygame.Rect(160, 220, 30, 30)
 trigger_falling_block_zone = pygame.Rect(800, 320, 50, 10)  # 트리거 영역 수정
 clock = pygame.time.Clock()
+trigger_zone = pygame.Rect(680, 510, 240, 50)
 spike_trigger_zone = pygame.Rect(540, 455, 20, 100)
 
 # 폰트 설정
@@ -157,13 +152,13 @@ def load_next_map():
         pygame.quit()
         sys.exit()
 
-# 바닥 속성을 변경할 변수 추가
+# 바닥 속성을 변경
 floor_dropped = False
 drop_y = SCREEN_HEIGHT - floor_height + 200  # 떨어진 바닥의 y 좌표
 
 # 게임 초기화
 def reset_game():
-    global character_x, character_y, vertical_momentum, is_on_ground, blocks, additional_block_added_1, additional_block_added_2, moving_block_triggered, block_spawn_time, block_spawned, camera_x, trick_hole_visible, trick_hole_y, falling_block, spike_height, spike_positions, spike_triggered, jumping_block
+    global character_x, character_y, vertical_momentum, is_on_ground, blocks, additional_block_added_1, additional_block_added_2, moving_block_triggered, block_spawn_time, block_spawned, camera_x, trick_hole_visible, trick_hole_y, falling_block, spike_height, spike_positions, spike_triggered
     character_x, character_y = 30, SCREEN_HEIGHT - character_height * 2
     vertical_momentum = 0
     is_on_ground = True
@@ -178,12 +173,11 @@ def reset_game():
         block.is_visible = True
     trick_hole_visible = False  # 트릭 홀 초기화
     trick_hole_y = floor_y  # 트릭홀 위치 초기화
-    falling_block = Block(800, 0, speed=10)  # 속도를 2배로 빠르게 설정
+    falling_block = Block(800, 0, speed=10)  # 속도를 2배
     falling_block.is_visible = False  # 초기에는 보이지 않도록 설정
     spike_height = 20  # 가시 높이 초기화
     spike_positions = [(x, floor_y - spike_height) for x in range(550, 600, spike_width)]  # 가시 위치 초기화
     spike_triggered = False  # 가시 트리거 초기화
-    jumping_block.is_visible = False  # 점핑 블럭 초기화
 
 # 게임 루프
 running = True
@@ -192,8 +186,8 @@ is_on_ground = True
 space_pressed = False
 additional_block_added_1 = False 
 additional_block_added_2 = False 
-moving_block_triggered = False  # 움직이는 블록이 생성되었는지 여부
-block_spawned = False  # 블록이 생성되지 않은 상태로 초기화
+moving_block_triggered = False  
+block_spawned = False  
 camera_x = 0  # 카메라 초기화
 
 # 캐릭터의 상단이 블록의 하단에 닿을 때
@@ -293,7 +287,7 @@ while running:
         reset_game()
 
     if check_trigger_zone_collision(character_rect, trigger_zone):
-        jumping_block.is_visible = True
+        trick_hole_visible = True
         
     if check_trigger_zone_collision(character_rect, del_block_1):
         blocks[1].is_visible = False
@@ -316,13 +310,6 @@ while running:
             block.move()
             if block.is_visible and character_rect.colliderect(pygame.Rect(block.x, block.y, platform_width, platform_height)):
                 reset_game()
-
-    if jumping_block.is_visible:
-        pygame.draw.rect(screen, platform_color, (jumping_block.x - camera_x, jumping_block.y, platform_width, platform_height))
-
-    if character_rect.colliderect(pygame.Rect(jumping_block.x, jumping_block.y, platform_width, platform_height)):
-        character_y = -character_height  # 맵 밖으로 점프하여 죽음
-        reset_game()
 
     for block in blocks:
         if block.is_visible:
