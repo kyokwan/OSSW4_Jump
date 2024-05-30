@@ -55,6 +55,9 @@ trick_hole_x, trick_hole_y = 700, floor_y
 trick_hole_visible = False
 trick_hole_speed = 2  # 트릭홀이 내려가는 속도
 
+# 점프 블록의 가로 길이 설정
+jumping_block_width = platform_width + 15  # 기본 플랫폼 가로 길이보다 15 증가
+
 # 점프 블록
 class Block:
     def __init__(self, x, y, speed=0, cloud=False):
@@ -318,8 +321,8 @@ while running:
         jumping_block.is_visible = True
 
     if jumping_block.is_visible:
-        pygame.draw.rect(screen, platform_color, (jumping_block.x - camera_x, jumping_block.y, platform_width, platform_height))
-        if character_rect.colliderect(pygame.Rect(jumping_block.x, jumping_block.y, platform_width, platform_height)):
+        pygame.draw.rect(screen, platform_color, (jumping_block.x - camera_x, jumping_block.y, jumping_block_width, platform_height))
+        if character_rect.colliderect(pygame.Rect(jumping_block.x, jumping_block.y, jumping_block_width, platform_height)):
             on_jumping_block = True
             jump_timer = pygame.time.get_ticks()
 
