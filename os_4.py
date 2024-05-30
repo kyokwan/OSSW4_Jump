@@ -302,6 +302,9 @@ while running:
         moving_block = Block(-platform_width, 230, speed=9)
         blocks.append(moving_block)
         block_spawned = True
+        
+    if jumping_block.is_visible:
+        pygame.draw.rect(screen, platform_color, (jumping_block.x - camera_x, jumping_block.y, platform_width, platform_height))
 
     if character_rect.colliderect(add_block_1) and not additional_block_added_1:
         blocks.append(Block(50, 375))
